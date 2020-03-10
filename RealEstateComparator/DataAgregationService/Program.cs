@@ -6,7 +6,12 @@ namespace DataAgregationService
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            Console.WriteLine("DataAgregationService Start");
+
+            var dataAgregator = new DataAgregator();
+            dataAgregator.Run();
+
+            Console.WriteLine("DataAgregationService End");
         }
     }
 }
