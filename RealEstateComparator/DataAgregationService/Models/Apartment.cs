@@ -18,7 +18,7 @@ namespace DataAgregationService.Models
 
         public decimal SquareMeterPriceMax { get; set; }
 
-        public ApartComplex ComplexId { get; set; }
+        public int ComplexId { get; set; }
 
         public ApartComplex Complex { get; set; }
     }
