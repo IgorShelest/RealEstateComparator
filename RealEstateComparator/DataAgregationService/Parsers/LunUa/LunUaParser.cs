@@ -79,9 +79,7 @@ namespace DataAgregationService.Parsers
             foreach (var apartComplex in apartComplexes)
             {
                 var apartmentsPerApartComplex = ParseHtmlApartmentsPerApartComplex(apartComplex.Url, _apartment);
-
-                if (apartmentsPerApartComplex != null)
-                    apartComplex.Apartments = apartmentsPerApartComplex;
+                apartComplex.Apartments = apartmentsPerApartComplex;
             }
         }
         

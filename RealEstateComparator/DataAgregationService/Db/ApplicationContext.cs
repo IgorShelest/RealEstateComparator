@@ -12,7 +12,6 @@ namespace DataAgregationService.Db
     {
         public virtual DbSet<ApartComplex> ApartComplexes { get; set; }
 
-        public virtual DbSet<Apartment> Apartments { get; set; }
         public ApplicationContext()
         {
             Database.EnsureCreated();
