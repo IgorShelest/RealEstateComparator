@@ -13,16 +13,29 @@ namespace DataAgregationService.Parsers
     {
         private HtmlWeb _web;
 
-        static private IEnumerable<string> _harmfulSymbols = new List<string>
+        static private IEnumerable<string> _spaces = new List<string>
         {
             " ", // non-breaking space
             " "  // space
         };
 
-        static private string removeHarmfulSymbols(string data)
+        static private IEnumerable<string> _harmfulSymbols = new List<string>
+        {
+            "&nbsp;", // non-breaking space
+        };
+
+        static private string removeSpaces(string data)
+        {
+            foreach (var symbol in _spaces)
+                data = data.Replace(symbol, "");
+
+            return data.Trim();
+        }
+
+        static private string replaceHarmfulSymbols(string data)
         {
             foreach (var symbol in _harmfulSymbols)
-                data = data.Replace(symbol, "");
+                data = data.Replace(symbol, " ");
 
             return data.Trim();
         }
@@ -37,7 +50,7 @@ namespace DataAgregationService.Parsers
             try
             {                
                 HtmlDocument htmlPage = _web.Load(url);
-                var htmlNodes = htmlPage.DocumentNode.SelectNodes(xPath).Select(node => node.InnerText).First();
+                var htmlNodes = replaceHarmfulSymbols(htmlPage.DocumentNode.SelectNodes(xPath).Select(node => node.InnerText).First());
                 return htmlNodes;
             }
             catch (Exception ex)
@@ -53,7 +66,8 @@ namespace DataAgregationService.Parsers
             try
             {
                 HtmlDocument htmlPage = _web.Load(url);
-                var texts = htmlPage.DocumentNode.SelectNodes(xPath).Select(node => node.InnerText.Trim());
+                var texts = htmlPage.DocumentNode.SelectNodes(xPath).Select(node => replaceHarmfulSymbols(node.InnerText.Trim()));
+
                 return texts;
             }
             catch (Exception ex)
@@ -85,7 +99,7 @@ namespace DataAgregationService.Parsers
             try
             {
                 HtmlDocument htmlPage = _web.Load(url);
-                var htmlNodes = htmlPage.DocumentNode.SelectNodes(xPath).Select(node => new Tuple<string,string>(node.InnerText.Trim(), node.Attributes["href"].Value.Trim()));
+                var htmlNodes = htmlPage.DocumentNode.SelectNodes(xPath).Select(node => new Tuple<string,string>(replaceHarmfulSymbols(node.InnerText.Trim()), node.Attributes["href"].Value.Trim()));
                 return htmlNodes;
             }
             catch (Exception ex)
@@ -144,7 +158,7 @@ namespace DataAgregationService.Parsers
                     String.Format(@"^(?<num>[А-ЯІ][а-яі]+)")
                 };
 
-                var numOfRoomsText = removeHarmfulSymbols(apartment.SelectSingleNode(apartment.XPath + numOfRoomsXPath).InnerText);
+                var numOfRoomsText = removeSpaces(apartment.SelectSingleNode(apartment.XPath + numOfRoomsXPath).InnerText);
 
                 foreach (var pattern in numOfRoomsPatterns)
                 {
@@ -180,7 +194,7 @@ namespace DataAgregationService.Parsers
                     String.Format(@"(?<{0}>\d+)м²", minTag)
                 };
 
-                var roomSpaceText = removeHarmfulSymbols(apartment.SelectSingleNode(apartment.XPath + roomSpaceXPath).InnerText);
+                var roomSpaceText = removeSpaces(apartment.SelectSingleNode(apartment.XPath + roomSpaceXPath).InnerText);
 
                 foreach (var pattern in roomSpacePatterns)
                 {
@@ -221,7 +235,7 @@ namespace DataAgregationService.Parsers
                     String.Format(@"(?<min>\d+)грн\/м²", minTag)
                 };
 
-                var apartPriceText = removeHarmfulSymbols(apartment.SelectSingleNode(apartment.XPath + priceXPath).InnerText);
+                var apartPriceText = removeSpaces(apartment.SelectSingleNode(apartment.XPath + priceXPath).InnerText.Trim());
 
                 foreach (var pattern in pricePatterns)
                 {
