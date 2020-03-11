@@ -8,6 +8,6 @@ namespace DataAgregationService.Parsers
 {
     interface IParser
     {
-        IEnumerable<ApartComplex> ParseSpecificData();
+        ICollection<ApartComplex> ParseSpecificData();
     }
 }

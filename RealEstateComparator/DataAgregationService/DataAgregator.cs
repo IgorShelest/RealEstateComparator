@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace DataAgregationService
 {
@@ -14,7 +15,7 @@ namespace DataAgregationService
         // Db data
         private ApplicationContext _dbContext;
 
-        private List<ApartComplex> _apartComplexes;
+        private ICollection<ApartComplex> _apartComplexes;
 
         // Internal data
         private List<IDataSource> _dataSources;
@@ -22,8 +23,6 @@ namespace DataAgregationService
         public DataAgregator( )
         {
             _dbContext = new ApplicationContext();
-
-            _apartComplexes = new List<ApartComplex>();
 
             _dataSources = new List<IDataSource>() {new LunUa()};
         }
@@ -38,21 +37,24 @@ namespace DataAgregationService
         private void GetData()
         {
             var apartComplexParser = new LunUaParser();
-            var apartComplexes = apartComplexParser.ParseSpecificData();
-            _apartComplexes.AddRange(apartComplexes);
+
+            _apartComplexes = apartComplexParser.ParseSpecificData();
         }
 
         private void ValidateData()
         {
-            foreach (var apartComplex in _apartComplexes)
-            {
-                if (apartComplex.Apartments == null)
-                    _apartComplexes.Remove(apartComplex);
+            var complexesWithoutApartments = _apartComplexes.Where(complex => complex.Apartments == null).ToList();
+
+            foreach (var complex in complexesWithoutApartments)
+            {                
+                _apartComplexes.Remove(complex);
             }
         }
 
         private void UpdateDb()
         {
+            _dbContext.ApartComplexes.AddRange(_apartComplexes);
+            _dbContext.SaveChanges();
         }
     }
 }

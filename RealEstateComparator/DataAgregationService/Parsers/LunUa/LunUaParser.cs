@@ -23,7 +23,7 @@ namespace DataAgregationService.Parsers
 
         private readonly string _apartment = "//*[@id='prices']/div[*]/div/a[@class='BuildingPrices-row']";
 
-        private IEnumerable<CityData> GetCityData()
+        private ICollection<CityData> GetCityData()
         {
             var cityTextAndHrefPairs = ParseHtmlTextAndHRef(_homePageUrl, _cityHRef);
 
@@ -40,7 +40,7 @@ namespace DataAgregationService.Parsers
             return cityData;
         }
 
-        private IEnumerable<ApartComplexGroupData> GetApartComplexGroupData(IEnumerable<CityData> cityData)
+        private ICollection<ApartComplexGroupData> GetApartComplexGroupData(ICollection<CityData> cityData)
         {
             var apartComplexesGroupData = new List<ApartComplexGroupData>();
          
@@ -58,7 +58,7 @@ namespace DataAgregationService.Parsers
             return apartComplexesGroupData;
         }
 
-        private IEnumerable<ApartComplex> GetApartComplexes(IEnumerable<ApartComplexGroupData> apartComplexGroupData)
+        private ICollection<ApartComplex> GetApartComplexes(ICollection<ApartComplexGroupData> apartComplexGroupData)
         {
             var apartComplexes = new List<ApartComplex>();
 
@@ -74,7 +74,7 @@ namespace DataAgregationService.Parsers
             return apartComplexes;
         }
 
-        private void SetApartments(ref IEnumerable<ApartComplex> apartComplexes)
+        private void SetApartments(ref ICollection<ApartComplex> apartComplexes)
         {
             foreach (var apartComplex in apartComplexes)
             {
@@ -85,7 +85,7 @@ namespace DataAgregationService.Parsers
             }
         }
         
-        private IEnumerable<ApartComplex> GetCityApartComplexes(ApartComplexGroupData apartComplexGroupData)
+        private ICollection<ApartComplex> GetCityApartComplexes(ApartComplexGroupData apartComplexGroupData)
         {
             bool nextPageExists = true;
             var pageNumber = 1;
@@ -116,7 +116,7 @@ namespace DataAgregationService.Parsers
             return apartComplexDataPerCity;
         }
 
-        public IEnumerable<ApartComplex> ParseSpecificData()
+        public ICollection<ApartComplex> ParseSpecificData()
         {
             var cityData = GetCityData();
             var apartComplexGroupData = GetApartComplexGroupData(cityData);
