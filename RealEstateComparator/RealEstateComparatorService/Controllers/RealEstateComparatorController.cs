@@ -1,16 +1,27 @@
-﻿using System;
+﻿using DataAgregationService.Db;
+using DataAgregationService.Models;
+using Microsoft.AspNetCore.Mvc;
+using RealEstateComparatorService.Classes;
+using RealEstateComparatorService.Services;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 
 namespace RealEstateComparatorService.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/RealEstateComparator")]
     public class RealEstateComparatorController : ControllerBase
     {
+        [HttpPost]
+        public IActionResult ProposeBetterApartments(ApartmentSpecifications apartmentSpecs)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest();
 
+            var realEstateService = new RealEstateService();
+            var betterApartments = realEstateService.GetBetterApartments(apartmentSpecs);
+
+            return Ok(betterApartments);
+        }
     }
 }

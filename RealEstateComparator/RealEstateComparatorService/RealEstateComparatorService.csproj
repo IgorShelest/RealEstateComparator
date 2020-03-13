@@ -1,13 +1,25 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="..\DataAgregationService\Db\ApplicationContext.cs" Link="Db\ApplicationContext.cs" />
     <Compile Include="..\DataAgregationService\Models\ApartComplex.cs" Link="Models\ApartComplex.cs" />
     <Compile Include="..\DataAgregationService\Models\Apartment.cs" Link="Models\Apartment.cs" />
-    <Compile Include="..\DataAgregationService\Models\LunUaData.cs" Link="Models\LunUaData.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Db\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.2" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.1.2">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
   </ItemGroup>
 
 
