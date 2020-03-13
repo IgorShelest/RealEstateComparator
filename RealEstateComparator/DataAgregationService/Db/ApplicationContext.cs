@@ -11,6 +11,8 @@ namespace DataAgregationService.Db
     class ApplicationContext : DbContext
     {
         public virtual DbSet<ApartComplex> ApartComplexes { get; set; }
+        
+        public virtual DbSet<Apartment> Apartments { get; set; }
 
         public ApplicationContext()
         {

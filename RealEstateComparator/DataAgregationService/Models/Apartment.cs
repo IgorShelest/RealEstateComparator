@@ -4,7 +4,7 @@ using System.Text;
 
 namespace DataAgregationService.Models
 {
-    class Apartment: LunUaData
+    public class Apartment
     {
         public int Id { get; set; }
                         
@@ -14,9 +14,9 @@ namespace DataAgregationService.Models
 
         public int DwellingSpaceMax { get; set; }
 
-        public decimal SquareMeterPriceMin { get; set; }
+        public int SquareMeterPriceMin { get; set; }
 
-        public decimal SquareMeterPriceMax { get; set; }
+        public int SquareMeterPriceMax { get; set; }
 
         public int ComplexId { get; set; }
 

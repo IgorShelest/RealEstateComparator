@@ -4,7 +4,7 @@ using System.Text;
 
 namespace DataAgregationService.Models
 {
-    class ApartComplex: LunUaData
+    public class ApartComplex
     {
         public int Id { get; set; }
 

@@ -58,11 +58,11 @@ namespace DataAgregationService.Migrations
                     b.Property<string>("NumberOfRooms")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<decimal>("SquareMeterPriceMax")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<int>("SquareMeterPriceMax")
+                        .HasColumnType("int");
 
-                    b.Property<decimal>("SquareMeterPriceMin")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<int>("SquareMeterPriceMin")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 

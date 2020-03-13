@@ -30,8 +30,8 @@ namespace DataAgregationService.Migrations
                     NumberOfRooms = table.Column<string>(nullable: true),
                     DwellingSpaceMin = table.Column<int>(nullable: false),
                     DwellingSpaceMax = table.Column<int>(nullable: false),
-                    SquareMeterPriceMin = table.Column<decimal>(nullable: false),
-                    SquareMeterPriceMax = table.Column<decimal>(nullable: false),
+                    SquareMeterPriceMin = table.Column<int>(nullable: false),
+                    SquareMeterPriceMax = table.Column<int>(nullable: false),
                     ComplexId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
