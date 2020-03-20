@@ -1,12 +1,8 @@
-﻿using DataAgregationService.DataSources;
+﻿using System.Collections.Generic;
+using System.Linq;
 using DataAgregationService.Db;
 using DataAgregationService.Models;
 using DataAgregationService.Parsers;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 
 namespace DataAgregationService
 {
@@ -14,17 +10,16 @@ namespace DataAgregationService
     {
         // Db data
         private ApplicationContext _dbContext;
-
         private ICollection<ApartComplex> _apartComplexes;
 
         // Internal data
-        private List<IDataSource> _dataSources;
+        private List<IApartmentParser> _parsers;
 
-        public DataAgregator( )
+        public DataAgregator()
         {
             _dbContext = new ApplicationContext();
 
-            _dataSources = new List<IDataSource>() {new LunUa()};
+            _parsers = new List<IApartmentParser>() { new LunUaApartmentParser() };
         }
 
         public void Run()
@@ -36,9 +31,8 @@ namespace DataAgregationService
 
         private void GetData()
         {
-            var apartComplexParser = new LunUaParser();
-
-            _apartComplexes = apartComplexParser.ParseSpecificData();
+            foreach (var parser in _parsers)
+                _apartComplexes = parser.ParseApartmentData();
         }
 
         private void ValidateData()
@@ -46,7 +40,7 @@ namespace DataAgregationService
             var complexesWithoutApartments = _apartComplexes.Where(complex => complex.Apartments == null).ToList();
 
             foreach (var complex in complexesWithoutApartments)
-            {                
+            {
                 _apartComplexes.Remove(complex);
             }
         }

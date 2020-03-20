@@ -1,10 +1,9 @@
-﻿using DataAgregationService.Db;
-using DataAgregationService.Models;
-using RealEstateComparatorService.Classes;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
+using DataAgregationService.Db;
+using DataAgregationService.Models;
+using RealEstateComparatorService.Classes;
 
 namespace RealEstateComparatorService.Services
 {
@@ -24,14 +23,14 @@ namespace RealEstateComparatorService.Services
                 return apartments;
             }
             catch (Exception ex)
-            { 
+            {
                 // Log
             }
 
             return null;
         }
 
-        private int calculateSquareMeterPrice(Apartment apartment, int dwellingSpace)
+        private int CalculateSquareMeterPrice(Apartment apartment, int dwellingSpace)
         {
             var spaceDiff = apartment.DwellingSpaceMax - apartment.DwellingSpaceMin;
             var priceDiff = apartment.SquareMeterPriceMax - apartment.SquareMeterPriceMin;
@@ -46,9 +45,9 @@ namespace RealEstateComparatorService.Services
             return squareMeterPrice;
         }
 
-        private int calculateApartmentPrice(Apartment apartment, int dwellingSpace)
+        private int CalculateApartmentPrice(Apartment apartment, int dwellingSpace)
         {
-            var squareMeterPrice = calculateSquareMeterPrice(apartment, dwellingSpace);
+            var squareMeterPrice = CalculateSquareMeterPrice(apartment, dwellingSpace);
             var apartmentPrice = squareMeterPrice * dwellingSpace;
 
             return apartmentPrice;
@@ -63,7 +62,7 @@ namespace RealEstateComparatorService.Services
                 var apartments = comparableApartments
                      .Where(delegate (Apartment apartment)
                      {
-                         var apartPriceWithoutRenovation = calculateApartmentPrice(apartment, apartmentSpecs.DwellingSpace);
+                         var apartPriceWithoutRenovation = CalculateApartmentPrice(apartment, apartmentSpecs.DwellingSpace);
                          var apartPriceWithRenovation = apartPriceWithoutRenovation + generalRenovationPrice;
 
                          var isItProfitable = apartPriceWithRenovation < apartmentSpecs.OverallPrice;

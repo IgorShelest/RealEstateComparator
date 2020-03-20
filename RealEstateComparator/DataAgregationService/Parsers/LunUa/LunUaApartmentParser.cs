@@ -1,9 +1,8 @@
-﻿using DataAgregationService.Models;
-using DataAgregationService.ParsedData.LunUa;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using DataAgregationService.Models;
+using DataAgregationService.ParsedData.LunUa;
 
 namespace DataAgregationService.Parsers
 {
@@ -43,13 +42,13 @@ namespace DataAgregationService.Parsers
         private ICollection<ApartComplexGroupData> GetApartComplexGroupData(ICollection<CityData> cityData)
         {
             var apartComplexesGroupData = new List<ApartComplexGroupData>();
-         
+
             foreach (var data in cityData)
             {
                 var apartComplexGroupHRef = ParseHtmlHRef(data.Url, _apartComplexGroupHRef);
 
                 apartComplexesGroupData.Add(new ApartComplexGroupData
-                { 
+                {
                     CityName = data.Name,
                     Url = _homePageUrl + apartComplexGroupHRef
                 });
@@ -65,10 +64,8 @@ namespace DataAgregationService.Parsers
             foreach (var data in apartComplexGroupData)
             {
                 var apartComplexDataPerCity = GetCityApartComplexes(data);
-                if(apartComplexDataPerCity != null)
+                if (apartComplexDataPerCity != null)
                     apartComplexes.AddRange(apartComplexDataPerCity);
-
-                break; // to delete
             }
 
             return apartComplexes;
@@ -82,7 +79,7 @@ namespace DataAgregationService.Parsers
                 apartComplex.Apartments = apartmentsPerApartComplex;
             }
         }
-        
+
         private ICollection<ApartComplex> GetCityApartComplexes(ApartComplexGroupData apartComplexGroupData)
         {
             bool nextPageExists = true;
@@ -104,7 +101,7 @@ namespace DataAgregationService.Parsers
                     Url = _homePageUrl + hRef
                 });
 
-                if(apartComplexData != null)
+                if (apartComplexData != null)
                     apartComplexDataPerCity.AddRange(apartComplexData);
 
                 nextPageExists = ParseHtmlNextPageExists(apartComplexGroupData.Url + pageTag, _pageNumbers);
@@ -119,7 +116,7 @@ namespace DataAgregationService.Parsers
             var cityData = GetCityData();
             var apartComplexGroupData = GetApartComplexGroupData(cityData);
 
-            var apartComplexes = GetApartComplexes(apartComplexGroupData);               
+            var apartComplexes = GetApartComplexes(apartComplexGroupData);
             SetApartments(ref apartComplexes);
 
             foreach (var apartComplex in apartComplexes)
