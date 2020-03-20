@@ -11,9 +11,9 @@ namespace DataAgregationService.Parsers
     {
         private readonly string _homePageUrl = "https://lun.ua";
 
-        private readonly string _cityHRef = "/html/body/div[3]/div[2]/div[1]/a[@data-analytics-click='geo_list|goto_catalog']";
+        private readonly string _cityHRef = "//*[@id='geo-control']/div[2]/div[2]/div/a[@data-search='list-item']";
 
-        private readonly string _apartComplexGroupHRef = "/html/body/div[3]/div[2]/div[3]/a[@data-analytics-click='buildings_list|goto_view_building']";
+        private readonly string _apartComplexGroupHRef = "/html/body/div[3]/div[2]/div[2]/a[@data-analytics-click='buildings_list|goto_view_building']";
 
         private readonly string _apartComplexHRef = "//*[@id='search-results']/div[3]/div[*]/div/a[@data-analytics-click='buildings_list|goto_view_building']";
 
