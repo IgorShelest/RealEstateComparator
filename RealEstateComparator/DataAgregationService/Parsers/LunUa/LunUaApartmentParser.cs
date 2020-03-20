@@ -7,7 +7,7 @@ using System.Text;
 
 namespace DataAgregationService.Parsers
 {
-    class LunUaParser : HtmlParser, IParser
+    class LunUaApartmentParser : HtmlParser, IApartmentParser
     {
         private readonly string _homePageUrl = "https://lun.ua";
 
@@ -114,7 +114,7 @@ namespace DataAgregationService.Parsers
             return apartComplexDataPerCity;
         }
 
-        public ICollection<ApartComplex> ParseSpecificData()
+        public ICollection<ApartComplex> ParseApartmentData()
         {
             var cityData = GetCityData();
             var apartComplexGroupData = GetApartComplexGroupData(cityData);
