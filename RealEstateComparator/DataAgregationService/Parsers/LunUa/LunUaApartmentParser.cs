@@ -22,6 +22,28 @@ namespace DataAgregationService.Parsers
 
         private readonly string _apartment = "//*[@id='prices']/div[*]/div/a[@class='BuildingPrices-row']";
 
+        public ICollection<ApartComplex> ParseApartmentData()
+        {
+            var cityData = GetCityData();
+            var apartComplexGroupData = GetApartComplexGroupData(cityData);
+
+            var apartComplexes = GetApartComplexes(apartComplexGroupData);
+            SetApartments(ref apartComplexes);
+
+            foreach (var apartComplex in apartComplexes)
+            {
+                Console.WriteLine(apartComplex.Name + " " + apartComplex.CityName + " " + apartComplex.Url);
+
+                if (apartComplex.Apartments != null)
+                {
+                    foreach (var apartment in apartComplex.Apartments)
+                        Console.WriteLine(apartment.NumberOfRooms + " " + apartment.DwellingSpaceMin + " " + apartment.DwellingSpaceMax + " " + apartment.SquareMeterPriceMin + " " + apartment.SquareMeterPriceMax);
+                }
+            }
+
+            return apartComplexes;
+        }
+
         private ICollection<CityData> GetCityData()
         {
             var cityTextAndHrefPairs = ParseHtmlTextAndHRef(_homePageUrl, _cityHRef);
@@ -52,6 +74,8 @@ namespace DataAgregationService.Parsers
                     CityName = data.Name,
                     Url = _homePageUrl + apartComplexGroupHRef
                 });
+
+                break; // to delete
             }
 
             return apartComplexesGroupData;
@@ -66,6 +90,8 @@ namespace DataAgregationService.Parsers
                 var apartComplexDataPerCity = GetCityApartComplexes(data);
                 if (apartComplexDataPerCity != null)
                     apartComplexes.AddRange(apartComplexDataPerCity);
+
+                break; // to delete
             }
 
             return apartComplexes;
@@ -110,29 +136,5 @@ namespace DataAgregationService.Parsers
 
             return apartComplexDataPerCity;
         }
-
-        public ICollection<ApartComplex> ParseApartmentData()
-        {
-            var cityData = GetCityData();
-            var apartComplexGroupData = GetApartComplexGroupData(cityData);
-
-            var apartComplexes = GetApartComplexes(apartComplexGroupData);
-            SetApartments(ref apartComplexes);
-
-            foreach (var apartComplex in apartComplexes)
-            {
-                Console.WriteLine(apartComplex.Name + " " + apartComplex.CityName + " " + apartComplex.Url);
-
-                if (apartComplex.Apartments != null)
-                {
-                    foreach (var apartment in apartComplex.Apartments)
-                        Console.WriteLine(apartment.NumberOfRooms + " " + apartment.DwellingSpaceMin + " " + apartment.DwellingSpaceMax + " " + apartment.SquareMeterPriceMin + " " + apartment.SquareMeterPriceMax);
-                }
-            }
-
-            return apartComplexes;
-        }
-
-
     }
 }

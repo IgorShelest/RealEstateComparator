@@ -1,10 +1,9 @@
-﻿using HtmlAgilityPack;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Linq;
 using System.Text.RegularExpressions;
 using DataAgregationService.Models;
+using HtmlAgilityPack;
 
 namespace DataAgregationService.Parsers
 {
@@ -12,44 +11,28 @@ namespace DataAgregationService.Parsers
     {
         private HtmlWeb _web;
 
-        static private IEnumerable<string> _spaces = new List<string>
+        private static readonly IEnumerable<string> _spaces = new List<string>
         {
             " ", // non-breaking space
             " "  // space
         };
 
-        static private IEnumerable<string> _harmfulSymbols = new List<string>
+        private static readonly IEnumerable<string> _harmfulSymbols = new List<string>
         {
             "&nbsp;", // non-breaking space
         };
-
-        static private string removeSpaces(string data)
-        {
-            foreach (var symbol in _spaces)
-                data = data.Replace(symbol, "");
-
-            return data.Trim();
-        }
-
-        static private string replaceHarmfulSymbols(string data)
-        {
-            foreach (var symbol in _harmfulSymbols)
-                data = data.Replace(symbol, " ");
-
-            return data.Trim();
-        }
 
         public HtmlParser()
         {
             _web = new HtmlWeb();
         }
 
-        public string ParseHtmlText(string url, string xPath) 
+        public string ParseHtmlText(string url, string xPath)
         {
             try
-            {                
+            {
                 HtmlDocument htmlPage = _web.Load(url);
-                var htmlNodes = replaceHarmfulSymbols(htmlPage.DocumentNode.SelectNodes(xPath).Select(node => node.InnerText).First());
+                var htmlNodes = ReplaceHarmfulSymbols(htmlPage.DocumentNode.SelectNodes(xPath).Select(node => node.InnerText).First());
                 return htmlNodes;
             }
             catch (Exception ex)
@@ -65,7 +48,7 @@ namespace DataAgregationService.Parsers
             try
             {
                 HtmlDocument htmlPage = _web.Load(url);
-                var texts = htmlPage.DocumentNode.SelectNodes(xPath).Select(node => replaceHarmfulSymbols(node.InnerText.Trim()));
+                var texts = htmlPage.DocumentNode.SelectNodes(xPath).Select(node => ReplaceHarmfulSymbols(node.InnerText.Trim()));
 
                 return texts;
             }
@@ -98,7 +81,7 @@ namespace DataAgregationService.Parsers
             try
             {
                 HtmlDocument htmlPage = _web.Load(url);
-                var htmlNodes = htmlPage.DocumentNode.SelectNodes(xPath).Select(node => new Tuple<string,string>(replaceHarmfulSymbols(node.InnerText.Trim()), node.Attributes["href"].Value.Trim()));
+                var htmlNodes = htmlPage.DocumentNode.SelectNodes(xPath).Select(node => new Tuple<string, string>(ReplaceHarmfulSymbols(node.InnerText.Trim()), node.Attributes["href"].Value.Trim()));
                 return htmlNodes;
             }
             catch (Exception ex)
@@ -157,7 +140,7 @@ namespace DataAgregationService.Parsers
                     String.Format(@"^(?<num>[А-ЯІ][а-яі]+)")
                 };
 
-                var numOfRoomsText = removeSpaces(apartment.SelectSingleNode(apartment.XPath + numOfRoomsXPath).InnerText);
+                var numOfRoomsText = RemoveSpaces(apartment.SelectSingleNode(apartment.XPath + numOfRoomsXPath).InnerText);
 
                 foreach (var pattern in numOfRoomsPatterns)
                 {
@@ -193,7 +176,7 @@ namespace DataAgregationService.Parsers
                     String.Format(@"(?<{0}>\d+)м²", minTag)
                 };
 
-                var roomSpaceText = removeSpaces(apartment.SelectSingleNode(apartment.XPath + roomSpaceXPath).InnerText);
+                var roomSpaceText = RemoveSpaces(apartment.SelectSingleNode(apartment.XPath + roomSpaceXPath).InnerText);
 
                 foreach (var pattern in roomSpacePatterns)
                 {
@@ -227,14 +210,14 @@ namespace DataAgregationService.Parsers
                 const string priceXPath = "/div[3]/div[2]";
 
 
-                
+
                 IEnumerable<string> pricePatterns = new List<string>
                 {
                     String.Format(@"(?<min>\d+)(-|—)(?<max>\d+)грн\/м²", minTag, maxTag),
                     String.Format(@"(?<min>\d+)грн\/м²", minTag)
                 };
 
-                var apartPriceText = removeSpaces(apartment.SelectSingleNode(apartment.XPath + priceXPath).InnerText.Trim());
+                var apartPriceText = RemoveSpaces(apartment.SelectSingleNode(apartment.XPath + priceXPath).InnerText.Trim());
 
                 foreach (var pattern in pricePatterns)
                 {
@@ -262,19 +245,12 @@ namespace DataAgregationService.Parsers
         {
             try
             {
-                //IEnumerable<string> apartmentXPathes = new List<string>
-                //{
-
-                //};
-
-                //Console.WriteLine(url + " " + xPath);
-
                 HtmlDocument htmlPage = _web.Load(url);
                 var htmlNodes = htmlPage.DocumentNode.SelectNodes(xPath);
                 if (htmlNodes == null)
                     return null;
-                
-                    var apartments = new List<Apartment>();
+
+                var apartments = new List<Apartment>();
 
                 foreach (var node in htmlNodes)
                 {
@@ -282,7 +258,7 @@ namespace DataAgregationService.Parsers
                     var roomSpace = ParseHtmlRoomSpace(node);
                     var price = ParseHtmlApartPrice(node);
 
-                    apartments.Add(new Apartment 
+                    apartments.Add(new Apartment
                     {
                         NumberOfRooms = numOfRooms,
                         DwellingSpaceMin = roomSpace.Item1,
@@ -290,7 +266,6 @@ namespace DataAgregationService.Parsers
                         SquareMeterPriceMin = price.Item1,
                         SquareMeterPriceMax = price.Item2
                     });
-                    //Console.WriteLine("{0} {1} {2}", numOfRooms, roomSpace, price);
                 }
 
                 return apartments;
@@ -301,6 +276,22 @@ namespace DataAgregationService.Parsers
             }
 
             return null;
+        }
+
+        private static string RemoveSpaces(string data)
+        {
+            foreach (var symbol in _spaces)
+                data = data.Replace(symbol, "");
+
+            return data.Trim();
+        }
+
+        private static string ReplaceHarmfulSymbols(string data)
+        {
+            foreach (var symbol in _harmfulSymbols)
+                data = data.Replace(symbol, " ");
+
+            return data.Trim();
         }
     }
 }
