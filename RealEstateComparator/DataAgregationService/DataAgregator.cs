@@ -32,7 +32,7 @@ namespace DataAgregationService
         private void GetData()
         {
             foreach (var parser in _parsers)
-                _apartComplexes = parser.ParseApartmentData();
+                _apartComplexes = _apartComplexes.Concat(parser.ParseApartmentData());
         }
 
         private void ValidateData()
