@@ -10,7 +10,7 @@ namespace DataAgregationService
     {
         // Db data
         private ApplicationContext _dbContext;
-        private ICollection<ApartComplex> _apartComplexes;
+        private IEnumerable<ApartComplex> _apartComplexes;
 
         // Internal data
         private List<IApartmentParser> _parsers;
@@ -37,12 +37,7 @@ namespace DataAgregationService
 
         private void ValidateData()
         {
-            var complexesWithoutApartments = _apartComplexes.Where(complex => complex.Apartments == null).ToList();
-
-            foreach (var complex in complexesWithoutApartments)
-            {
-                _apartComplexes.Remove(complex);
-            }
+            _apartComplexes = _apartComplexes.Where(complex => complex.Apartments != null);
         }
 
         private void UpdateDb()
