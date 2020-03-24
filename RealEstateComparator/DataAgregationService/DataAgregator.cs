@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using DataAgregationService.Db;
 using DataAgregationService.Enums;
 using DataAgregationService.Models;
@@ -38,10 +39,13 @@ namespace DataAgregationService
             _parsers.Add(ParserFactory.CreateParser(AvailableParsers.LunUa));
         }
 
-        private void GetData()
+        private async void GetData()
         {
-            foreach (var parser in _parsers)
-                _apartComplexes = _apartComplexes.Concat(parser.ParseApartmentData());
+            var taskResultList = _parsers.Select(parser => Task.Run(parser.ParseApartmentData));
+
+            Task.WaitAll(taskResultList.ToArray());
+
+            taskResultList.ToList().ForEach(task => _apartComplexes = _apartComplexes.Concat(task.Result));
         }
 
         private void ValidateData()
