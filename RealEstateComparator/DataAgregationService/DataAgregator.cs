@@ -19,6 +19,7 @@ namespace DataAgregationService
         public DataAgregator()
         {
             _dbContext = new ApplicationContext();
+            _apartComplexes = new List<ApartComplex>();
 
             _parsers = new List<IApartmentParser>() { new LunUaApartmentParser() };
         }
