@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using DataAgregationService.Db;
+using DataAgregationService.Enums;
 using DataAgregationService.Models;
 using DataAgregationService.Parsers;
 
@@ -20,16 +21,21 @@ namespace DataAgregationService
         {
             _dbContext = new ApplicationContext();
             _apartComplexes = new List<ApartComplex>();
-
-            _parsers = new List<IApartmentParser>() { new LunUaApartmentParser() };
+            _parsers = new List<IApartmentParser>();
         }
 
         public void Run()
         {
+            InitializeParsers();
             GetData();
             ValidateData();
             PrintData();
             UpdateDb();
+        }
+
+        private void InitializeParsers()
+        {
+            _parsers.Add(ParserFactory.CreateParser(AvailableParsers.LunUa));
         }
 
         private void GetData()
