@@ -1,12 +1,10 @@
-﻿using DataAgregationService.Models;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
+using DataAgregationService.Models;
 
 namespace DataAgregationService.Parsers
 {
     interface IApartmentParser
     {
-        ICollection<ApartComplex> ParseApartmentData();
+        IEnumerable<ApartComplex> ParseApartmentData();
     }
 }

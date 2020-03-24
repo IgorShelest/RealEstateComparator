@@ -18,7 +18,7 @@ namespace DataAgregationService.Parsers
             _web = new HtmlWeb();
         }
 
-        public ICollection<ApartComplex> ParseApartmentData()
+        public IEnumerable<ApartComplex> ParseApartmentData()
         {
             var cityData = GetCityData();
             var apartComplexGroupData = GetApartComplexGroupData(cityData);
@@ -29,7 +29,7 @@ namespace DataAgregationService.Parsers
             return apartComplexes;
         }
 
-        private ICollection<CityData> GetCityData()
+        private IEnumerable<CityData> GetCityData()
         {
             const string cityXPath = "//*[@id='geo-control']/div[2]/div[2]/div/a[@data-search='list-item']";
             var cityTextAndHrefPairs = ParseHtmlTextAndHRef(_homePageUrl, cityXPath);
@@ -47,7 +47,7 @@ namespace DataAgregationService.Parsers
             return cityData;
         }
 
-        private ICollection<ApartComplexGroupData> GetApartComplexGroupData(ICollection<CityData> cityData)
+        private IEnumerable<ApartComplexGroupData> GetApartComplexGroupData(IEnumerable<CityData> cityData)
         {
 
             const string apartComplexGroupXPath = "/html/body/div[3]/div[2]/div[2]/a[@data-analytics-click='buildings_list|goto_view_building']";
@@ -69,7 +69,7 @@ namespace DataAgregationService.Parsers
             return apartComplexesGroupData;
         }
 
-        private ICollection<ApartComplex> GetApartComplexes(ICollection<ApartComplexGroupData> apartComplexGroupData)
+        private IEnumerable<ApartComplex> GetApartComplexes(IEnumerable<ApartComplexGroupData> apartComplexGroupData)
         {
             var apartComplexes = new List<ApartComplex>();
 
@@ -85,7 +85,7 @@ namespace DataAgregationService.Parsers
             return apartComplexes;
         }
 
-        private void SetApartments(ref ICollection<ApartComplex> apartComplexes)
+        private void SetApartments(ref IEnumerable<ApartComplex> apartComplexes)
         {
             const string apartmentXPath = "//*[@id='prices']/div[*]/div/a[@class='BuildingPrices-row']";
             foreach (var apartComplex in apartComplexes)
@@ -95,7 +95,7 @@ namespace DataAgregationService.Parsers
             }
         }
 
-        private ICollection<ApartComplex> GetCityApartComplexes(ApartComplexGroupData apartComplexGroupData)
+        private IEnumerable<ApartComplex> GetCityApartComplexes(ApartComplexGroupData apartComplexGroupData)
         {
             const string apartComplexHRefXPath = "//*[@id='search-results']/div[3]/div[*]/div/a[@data-analytics-click='buildings_list|goto_view_building']";
             const string apartComplexNameXPath = "//*[@id='search-results']/div[3]/div[*]/div/a/div[3]/div[1]";
