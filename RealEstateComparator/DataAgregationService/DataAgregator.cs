@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using DataAgregationService.Db;
-using DataAgregationService.Enums;
 using DataAgregationService.Models;
 using DataAgregationService.Parsers;
 
@@ -36,7 +35,7 @@ namespace DataAgregationService
 
         private void InitializeParsers()
         {
-            _parsers.Add(ParserFactory.CreateParser(AvailableParsers.LunUa));
+            _parsers.Add(ParserFactory.CreateParser<LunUaApartmentParser>());
         }
 
         private async void GetData()
