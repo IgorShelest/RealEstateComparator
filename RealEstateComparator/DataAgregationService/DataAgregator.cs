@@ -15,7 +15,7 @@ namespace DataAgregationService
         private IEnumerable<ApartComplex> _apartComplexes;
 
         // Internal data
-        private List<IApartmentParser> _parsers;
+        private IEnumerable<IApartmentParser> _parsers;
 
         public DataAgregator()
         {
@@ -35,7 +35,7 @@ namespace DataAgregationService
 
         private void InitializeParsers()
         {
-            _parsers.Add(ParserFactory.CreateParser<LunUaApartmentParser>());
+            _parsers = _parsers.Append(ParserFactory.CreateParser<LunUaApartmentParser>());
         }
 
         private async void GetData()
