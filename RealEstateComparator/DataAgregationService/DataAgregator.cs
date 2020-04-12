@@ -41,7 +41,6 @@ namespace DataAgregationService
         private async void GetData()
         {
             var taskResultList = _parsers.Select(parser => Task.Run(parser.ParseApartmentData));
-
             Task.WaitAll(taskResultList.ToArray());
 
             taskResultList.ToList().ForEach(task => _apartComplexes = _apartComplexes.Concat(task.Result));
