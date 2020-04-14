@@ -40,10 +40,26 @@ namespace DataAgregationService
 
         private async void GetData()
         {
-            var taskResultList = _parsers.Select(parser => Task.Run(parser.ParseApartmentData));
+            var getDataTasks = StartGetDataTasks();
+            AddGetDataResults(getDataTasks);
+        }
+
+        private IEnumerable<Task<IEnumerable<ApartComplex>>> StartGetDataTasks()
+        {
+            var taskResultList = new List<Task<IEnumerable<ApartComplex>>>();
+
+            foreach (var parser in _parsers)
+                taskResultList.Add(Task.Run(parser.ParseApartmentData));
+
             Task.WaitAll(taskResultList.ToArray());
 
-            taskResultList.ToList().ForEach(task => _apartComplexes = _apartComplexes.Concat(task.Result));
+            return taskResultList;
+        }
+
+        private void AddGetDataResults(IEnumerable<Task<IEnumerable<ApartComplex>>> getDataTasks)
+        {
+            foreach (var task in getDataTasks)
+                _apartComplexes = _apartComplexes.Concat(task.Result.ToList());
         }
 
         private void ValidateData()
