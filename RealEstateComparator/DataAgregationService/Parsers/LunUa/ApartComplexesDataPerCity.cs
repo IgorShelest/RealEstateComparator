@@ -1,6 +1,6 @@
 ﻿namespace DataAgregationService.ParsedData.LunUa
 {
-    struct ApartComplexesPerCityData
+    struct ApartComplexesDataPerCity
     {
         public string CityName { get; set; }
 

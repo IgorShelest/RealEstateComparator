@@ -20,14 +20,13 @@ namespace DataAgregationService
         public DataAgregator()
         {
             _dbContext = new ApplicationContext();
-            _apartComplexes = new List<ApartComplex>();
             _parsers = new List<IApartmentParser>();
         }
 
-        public void Run()
+        public async Task Run()
         {
             InitializeParsers();
-            GetData();
+            await GetData();
             ValidateData();
             PrintData();
             UpdateDb();
@@ -38,28 +37,14 @@ namespace DataAgregationService
             _parsers = _parsers.Append(ParserFactory.CreateParser<LunUaApartmentParser>());
         }
 
-        private async void GetData()
+        private async Task GetData()
         {
-            var getDataTasks = StartGetDataTasks();
-            AddGetDataResults(getDataTasks);
-        }
-
-        private IEnumerable<Task<IEnumerable<ApartComplex>>> StartGetDataTasks()
-        {
-            var taskResultList = new List<Task<IEnumerable<ApartComplex>>>();
-
-            foreach (var parser in _parsers)
-                taskResultList.Add(Task.Run(parser.ParseApartmentData));
-
-            Task.WaitAll(taskResultList.ToArray());
-
-            return taskResultList;
-        }
-
-        private void AddGetDataResults(IEnumerable<Task<IEnumerable<ApartComplex>>> getDataTasks)
-        {
-            foreach (var task in getDataTasks)
-                _apartComplexes = _apartComplexes.Concat(task.Result.ToList());
+            var getDataTasks = _parsers.Select(parser => parser.GetApartmentData());
+            var getDataResults = await Task.WhenAll(getDataTasks);
+            
+            var apartComplexes = new List<ApartComplex>();
+            getDataResults.ToList().ForEach(result => apartComplexes.AddRange(result));
+            _apartComplexes = apartComplexes;
         }
 
         private void ValidateData()
