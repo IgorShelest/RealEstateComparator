@@ -12,86 +12,49 @@ namespace DataAgregationService.Parsers
     class LunUaApartmentParser : IApartmentParser
     {
         private static readonly string _homePageUrl = "https://lun.ua";
-        //private HtmlWeb _web;
 
-        public LunUaApartmentParser()
+        public async Task<IEnumerable<ApartComplex>[]> GetApartmentData()
         {
-            //_web = new HtmlWeb();
-        }
-
-        //public IEnumerable<ApartComplex> ParseApartmentData()
-        //{
-        //    var citiesData = GetCitiesData();
-
-        //    var apartComplexesPerAllCitiesData = GetApartComplexesPerAllCitiesData(citiesData);
-        //    var apartComplexes = GetApartComplexes(apartComplexesPerAllCitiesData);
-        //    SetApartments(ref apartComplexes);
-
-        //    return apartComplexes;
-        //}
-
-        public IEnumerable<ApartComplex> ParseApartmentData()
-        {
-            var citiesData = GetCitiesData();
-            var apartComplexes = ParseApartmentDataPerAllCitiesAsync(citiesData);
+            var citiesData = await GetCityData();
+            var apartComplexes = await GetApartmentsForAllCities(citiesData);
             return apartComplexes;
         }
 
-        private IEnumerable<ApartComplex> ParseApartmentDataPerAllCitiesAsync(IEnumerable<CityData> allCitiesData)
+        private async Task<IEnumerable<ApartComplex>[]> GetApartmentsForAllCities(IEnumerable<CityData> allCitiesData)
         {
-            var parseApartmentDataPerCityTasks = StartParseApartmentDataPerAllCitiesTasksAsync(allCitiesData);
-            var apartComplexes = AddParseApartmentDataPerAllCitiesResultsAsync(parseApartmentDataPerCityTasks);
-
-            return apartComplexes;
+            var parseApartmentDataPerCityTasks = allCitiesData.Select(GetApartmentsForOneCity);
+            var parseApartmentDataPerCityTasksAll = await Task.WhenAll(parseApartmentDataPerCityTasks);
+            return parseApartmentDataPerCityTasksAll;
         }
 
-        private IEnumerable<Task<IEnumerable<ApartComplex>>> StartParseApartmentDataPerAllCitiesTasksAsync(IEnumerable<CityData> allCitiesData)
-        {
-            var parseApartmentDataPerCityTasks = new List<Task<IEnumerable<ApartComplex>>>();
-            foreach (var cityData in allCitiesData)
-                parseApartmentDataPerCityTasks.Add(Task.Run(() => ParseApartmentDataPerCityAsync(cityData)));
-
-            Task.WaitAll(parseApartmentDataPerCityTasks.ToArray());
-
-            return parseApartmentDataPerCityTasks;
-        }
-
-        private IEnumerable<ApartComplex> AddParseApartmentDataPerAllCitiesResultsAsync(IEnumerable<Task<IEnumerable<ApartComplex>>> parseApartmentDataPerCityTasks)
-        {
-            var apartComplexesPerCity = new List<ApartComplex>();
-            parseApartmentDataPerCityTasks.ToList().ForEach(task => apartComplexesPerCity.AddRange(task.Result));
-            return apartComplexesPerCity;
-        }
-
-        private IEnumerable<ApartComplex> ParseApartmentDataPerCityAsync(CityData cityData)
+        private async Task<IEnumerable<ApartComplex>> GetApartmentsForOneCity(CityData cityData)
         {
             try
             {
-                var apartComplexesPerCityData = GetApartComplexesPerCityData(cityData);
-                var apartComplexesPerCity = GetApartComplexesPerCityAsync(apartComplexesPerCityData);
+                var apartComplexDataPerCity = await GetApartComplexData(cityData);
+                var apartComplexesPerCity = await GetApartComplexesForAllPages(apartComplexDataPerCity);
 
                 return apartComplexesPerCity;
             }
             catch (Exception e)
             {
                 Console.WriteLine(e);
+                return null;
             }
-
-            return null;
         }
 
 
-        private IEnumerable<CityData> GetCitiesData()
+        private async Task<IEnumerable<CityData>> GetCityData()
         {
-            var cityHtml = LoadCityHtml();
+            var cityHtml = await LoadCityHtmlAsync();
             var cityData = CreateCityData(cityHtml);
             return cityData;
         }
 
-        private HtmlNodeCollection LoadCityHtml()
+        private async Task<HtmlNodeCollection> LoadCityHtmlAsync()
         {
             const string cityXPath = "//*[@id='geo-control']/div[2]/div[2]/div[1]/a[*]";
-            return LoadHtmlNodes(_homePageUrl, cityXPath);
+            return await LoadHtmlNodesAsync(_homePageUrl, cityXPath);
         }
 
         private IEnumerable<CityData> CreateCityData(HtmlNodeCollection cityHtml)
@@ -107,25 +70,21 @@ namespace DataAgregationService.Parsers
             return cityData;
         }
 
-        //private IEnumerable<ApartComplexesPerCityData> GetApartComplexesPerAllCitiesData(IEnumerable<CityData> cityData)
-        //{
-        //    return cityData.Select(GetApartComplexesPerCityData);
-        //}
-
-        private ApartComplexesPerCityData GetApartComplexesPerCityData(CityData cityData)
+        private async Task<ApartComplexesPerCityData> GetApartComplexData(CityData cityData)
         {
-            var apartComplexGroupHtml = LoadApartComplexesPerCityHtml(cityData.Url);
-            return CreateApartComplexGroupData(cityData, apartComplexGroupHtml);
+            var apartComplexGroupHtml = await LoadApartComplexDataHtml(cityData.Url);
+            return CreateApartComplexData(cityData, apartComplexGroupHtml);
         }
 
-        private HtmlNode LoadApartComplexesPerCityHtml(string url)
+        private async Task<HtmlNode> LoadApartComplexDataHtml(string url)
         {
-            //*[@id="geo-control"]/div[2]/div[2]/div[1]/a[1]
             const string apartComplexGroupXPath = "/html/body/div[3]/div[2]/div[2]/a";
-            return LoadHtmlNodes(url, apartComplexGroupXPath)?.First();
+            var apartComplexes = await LoadHtmlNodesAsync(url, apartComplexGroupXPath);
+
+            return apartComplexes.First();
         }
 
-        private ApartComplexesPerCityData CreateApartComplexGroupData(CityData cityData, HtmlNode parsedApartComplexGroupData)
+        private ApartComplexesPerCityData CreateApartComplexData(CityData cityData, HtmlNode parsedApartComplexGroupData)
         {
             return new ApartComplexesPerCityData()
             {
@@ -134,77 +93,20 @@ namespace DataAgregationService.Parsers
             };
         }
 
-
-        //private IEnumerable<ApartComplex> GetApartComplexes(IEnumerable<ApartComplexesPerCityData> apartComplexesPerCityData)
-        //{
-        //    var apartComplexes = new List<ApartComplex>();
-
-        //    foreach (var data in apartComplexesPerCityData)
-        //    {
-        //        var apartComplexesPerCity = GetApartComplexesPerCity(data);
-        //        if (apartComplexesPerCity != null)
-        //            apartComplexes.AddRange(apartComplexesPerCity);
-
-        //        break; // to delete
-        //    }
-
-        //    return apartComplexes;
-        //}
-
-        //private void SetApartments(ref IEnumerable<ApartComplex> apartComplexes)
-        //{
-        //    foreach (var apartComplex in apartComplexes)
-        //        apartComplex.Apartments = GetApartmentsPerApartComplex(apartComplex.Url);
-        //}
-
-        //private IEnumerable<ApartComplex> GetApartComplexesPerCity(ApartComplexesPerCityData apartComplexesPerCityData)
-        //{
-        //    var pageNumber = 1;
-        //    string currentPageUrl;
-        //    var apartComplexDataPerCity = new List<ApartComplex>();
-
-        //    do
-        //    {
-        //        currentPageUrl = CreatePageUrl(apartComplexesPerCityData.Url, pageNumber++);
-        //        var apartComplexesPerPage = GetApartComplexesPerPage(currentPageUrl, apartComplexesPerCityData.CityName);
-        //        apartComplexDataPerCity.AddRange(apartComplexesPerPage);
-        //    } while (false); // (NextPageExists(currentPageUrl));
-
-        //    return apartComplexDataPerCity;
-        //}
-
-        private IEnumerable<ApartComplex> GetApartComplexesPerCityAsync(ApartComplexesPerCityData apartComplexesPerCityData)
-        {
-            var getApartComplexesPerPageTasks = StartGetApartComplexesPerAllPagesTasksAsync(apartComplexesPerCityData);
-            var apartComplexDataPerCity = AddGetApartComplexesPerAllPagesResultsAsync(getApartComplexesPerPageTasks);
-
-            return apartComplexDataPerCity;
-        }
-
-        private IEnumerable<Task<IEnumerable<ApartComplex>>> StartGetApartComplexesPerAllPagesTasksAsync(ApartComplexesPerCityData apartComplexesPerCityData)
+        private async Task<IEnumerable<ApartComplex>> GetApartComplexesForAllPages(ApartComplexesPerCityData apartComplexesPerCityData)
         {
             var pageNumber = 1;
             string currentPageUrl;
-            var getApartComplexesPerPageTasks = new List<Task<IEnumerable<ApartComplex>>>();
+            var getApartComplexesPerPageTasks = new List<IEnumerable<ApartComplex>>();
 
             do
             {
                 currentPageUrl = CreatePageUrl(apartComplexesPerCityData.Url, pageNumber++);
-                getApartComplexesPerPageTasks.Add(Task.Run(() => GetApartComplexesPerPageAsync(currentPageUrl, apartComplexesPerCityData.CityName)));
+                getApartComplexesPerPageTasks.Add(await GetApartComplexesForPage(currentPageUrl, apartComplexesPerCityData.CityName));
             }
             while (false); // (NextPageExists(currentPageUrl));
 
-            Task.WaitAll(getApartComplexesPerPageTasks.ToArray());
-
-            return getApartComplexesPerPageTasks;
-        }
-
-        private IEnumerable<ApartComplex> AddGetApartComplexesPerAllPagesResultsAsync(IEnumerable<Task<IEnumerable<ApartComplex>>> getApartComplexesPerPageTasks)
-        {
-            var apartComplexDataPerCity = new List<ApartComplex>();
-            getApartComplexesPerPageTasks.ToList().ForEach(task => apartComplexDataPerCity.AddRange(task.Result));
-
-            return apartComplexDataPerCity;
+            return default;
         }
 
         private string CreatePageUrl(string url, int pageNumber)
@@ -213,58 +115,48 @@ namespace DataAgregationService.Parsers
             return url + pageTag + pageNumber;
         }
 
-        //private IEnumerable<ApartComplex> GetApartComplexesPerPage(string currentPageUrl, string cityName)
-        //{
-        //    var apartComplexesPerCityHtml = LoadApartComplexesPerPageHtml(currentPageUrl);
-        //    var apartComplexesPerCity = CreateApartComplexesPerPage(apartComplexesPerCityHtml, cityName);
-        //    return apartComplexesPerCity;
-        //}
-
-        private IEnumerable<ApartComplex> GetApartComplexesPerPageAsync(string currentPageUrl, string cityName)
+        private async Task<IEnumerable<ApartComplex>> GetApartComplexesForPage(string currentPageUrl, string cityName)
         {
             try
             {
-                var apartComplexesPerCityHtml = LoadApartComplexesPerPageHtml(currentPageUrl);
-                var apartComplexesPerCity = CreateApartComplexesPerPage(apartComplexesPerCityHtml, cityName);
+                var apartComplexesHtmlForPage = await LoadApartComplexesHtmlForPage(currentPageUrl);
+                var apartComplexesForPage = CreateApartComplexesForPage(apartComplexesHtmlForPage, cityName);
 
-                SetApartmentsAsync(ref apartComplexesPerCity);
+                foreach (var complex in apartComplexesForPage)
+                    complex.Apartments = await GetApartmentsForApartComplex(complex.Url);
 
-                return apartComplexesPerCity;
+                return apartComplexesForPage;
             }
             catch (Exception e)
             {
                 Console.WriteLine(e);
+                return null;
             }
-
-            return null;
         }
 
-        private void SetApartmentsAsync(ref IEnumerable<ApartComplex> apartComplexes)
-        {
-            var setApartmentsTasks = apartComplexes.Select(complex => Task.Run(() => SetApartmentsPerApartComplexAsync(ref complex)));
-            Task.WaitAll(setApartmentsTasks.ToArray());
-        }
-
-        private void SetApartmentsPerApartComplexAsync(ref ApartComplex apartComplex)
+        private async Task<IEnumerable<Apartment>> GetApartmentsForApartComplex(string url)
         {
             try
             {
-                var htmlNodes = LoadHtmlApartments(apartComplex.Url);
-                apartComplex.Apartments = CreateApartmentsPerApartComplex(htmlNodes);
+                var htmlNodes = await LoadApartmentsHtml(url);
+                var apartments = CreateApartmentsPerApartComplex(htmlNodes);
+                return apartments;
             }
             catch (Exception e)
             {
                 Console.WriteLine(e);
+                return null;
             }
         }
 
-        private HtmlNodeCollection LoadApartComplexesPerPageHtml(string url)
+        private async Task<HtmlNodeCollection> LoadApartComplexesHtmlForPage(string url)
         {
             const string apartComplexXPath = "//*[@id='search-results']/div[3]/div[*]/div";
-            return LoadHtmlNodes(url, apartComplexXPath);
+            var apartComplexesForPage = await LoadHtmlNodesAsync(url, apartComplexXPath);
+            return apartComplexesForPage;
         }
 
-        private IEnumerable<ApartComplex> CreateApartComplexesPerPage(HtmlNodeCollection apartComplexesPerPageHtml, string cityName)
+        private IEnumerable<ApartComplex> CreateApartComplexesForPage(HtmlNodeCollection apartComplexesPerPageHtml, string cityName)
         {
             return apartComplexesPerPageHtml.Select(complex => CreateApartComplex(complex, cityName));
         }
@@ -295,10 +187,10 @@ namespace DataAgregationService.Parsers
             return ParseText(searchedHtmlNode);
         }
 
-        private HtmlNodeCollection LoadHtmlNodes(string url, string xPath)
+        private async Task<HtmlNodeCollection> LoadHtmlNodesAsync(string url, string xPath)
         {
             HtmlWeb web = new HtmlWeb();
-            HtmlDocument htmlPage = web.Load(url);
+            HtmlDocument htmlPage = await web.LoadFromWebAsync(url);
             return htmlPage.DocumentNode.SelectNodes(xPath);
         }
 
@@ -329,25 +221,18 @@ namespace DataAgregationService.Parsers
             return data.Trim();
         }
 
-        //private IEnumerable<Apartment> GetApartmentsPerApartComplex(string url)
-        //{
-        //    var htmlNodes = LoadHtmlApartments(url);
-        //    return CreateApartmentsPerApartComplex(htmlNodes);
-        //}
-
-        private HtmlNodeCollection LoadHtmlApartments(string url)
+        private async Task<HtmlNodeCollection> LoadApartmentsHtml(string url)
         {
             try
             {
                 const string apartmentXPath = "//*[@id='prices']/div[4]/div[@class='BuildingPrices-table']/a[@class='BuildingPrices-row']";
-                return LoadHtmlNodes(url, apartmentXPath);
+                return await LoadHtmlNodesAsync(url, apartmentXPath);
             }
             catch (Exception e)
             {
                 Console.WriteLine(e);
+                return null;
             }
-
-            return null;
         }
 
         private IEnumerable<Apartment> CreateApartmentsPerApartComplex(HtmlNodeCollection htmlNodes)
@@ -465,10 +350,10 @@ namespace DataAgregationService.Parsers
             return default;
         }
 
-        private bool NextPageExists(string currentPageUrl)
+        private async Task<bool> NextPageExists(string currentPageUrl)
         {
             const string pageNumberXPath = "//*[@id='search-results']/div[4]/div/button[@data-analytics-click='catalog|pagination|page_click']";
-            var htmlNodes = LoadHtmlNodes(currentPageUrl, pageNumberXPath);
+            var htmlNodes = await LoadHtmlNodesAsync(currentPageUrl, pageNumberXPath);
 
             const string activePageTag = "-active";
             var activePageNode = htmlNodes.FirstOrDefault(node => node.Attributes["class"].Value == activePageTag);

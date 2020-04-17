@@ -24,10 +24,10 @@ namespace DataAgregationService
             _parsers = new List<IApartmentParser>();
         }
 
-        public void Run()
+        public async Task Run()
         {
             InitializeParsers();
-            GetData();
+            await GetData();
             ValidateData();
             PrintData();
             UpdateDb();
@@ -38,20 +38,18 @@ namespace DataAgregationService
             _parsers = _parsers.Append(ParserFactory.CreateParser<LunUaApartmentParser>());
         }
 
-        private async void GetData()
+        private async Task GetData()
         {
-            var getDataTasks = StartGetDataTasks();
-            AddGetDataResults(getDataTasks);
+            var getDataTasks = await StartGetDataTasks();
+            //AddGetDataResults(getDataTasks);
         }
 
-        private IEnumerable<Task<IEnumerable<ApartComplex>>> StartGetDataTasks()
+        private async Task<List<IEnumerable<ApartComplex>[]>> StartGetDataTasks()
         {
-            var taskResultList = new List<Task<IEnumerable<ApartComplex>>>();
+            var taskResultList = new List<IEnumerable<ApartComplex>[]>();
 
             foreach (var parser in _parsers)
-                taskResultList.Add(Task.Run(parser.ParseApartmentData));
-
-            Task.WaitAll(taskResultList.ToArray());
+                taskResultList.Add(await parser.GetApartmentData());
 
             return taskResultList;
         }

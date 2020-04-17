@@ -1,13 +1,13 @@
-﻿using System;
+﻿using System.Threading.Tasks;
 
 namespace DataAgregationService
 {
     class Program
     {
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
             var dataAgregator = new DataAgregator();
-            dataAgregator.Run();
+            await dataAgregator.Run();
         }
     }
 }
