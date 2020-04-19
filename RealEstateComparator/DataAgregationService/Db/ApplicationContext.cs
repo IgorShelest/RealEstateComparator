@@ -25,7 +25,7 @@ namespace DataAgregationService.Db
             var config = configBuilder.Build();
             string connectionString = config.GetConnectionString("DefaultConnection");
 
-            optionsBuilder.UseSqlServer(connectionString);
+            optionsBuilder.UseMySql(connectionString);
         }
     }
 }
