@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace DataAgregationService.Models
+﻿namespace DataAgregationService.Models
 {
     public class Apartment
     {

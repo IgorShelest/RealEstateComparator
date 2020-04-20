@@ -2,24 +2,21 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using DataAgregationService.Db;
+using DataAgregationService.Interfaces;
+using DataAgregationService.Parsers.LunUa;
 using DataAgregationService.Models;
-using DataAgregationService.Parsers;
 
 namespace DataAgregationService
 {
-    class DataAgregator
+    public class DataAgregator
     {
-        // Db data
-        private ApplicationContext _dbContext;
+        private DbService.DbService _dbService;
         private IEnumerable<ApartComplex> _apartComplexes;
-
-        // Internal data
         private IEnumerable<IApartmentParser> _parsers;
 
         public DataAgregator()
         {
-            _dbContext = new ApplicationContext();
+            _dbService = new DbService.DbService();
             _parsers = new List<IApartmentParser>();
         }
 
@@ -54,8 +51,9 @@ namespace DataAgregationService
 
         private void UpdateDb()
         {
-            _dbContext.ApartComplexes.AddRange(_apartComplexes);
-            _dbContext.SaveChanges();
+            IEnumerable<ApartComplex> apartComplexes = new List<ApartComplex>();
+            DbService.DbService dbService = new DbService.DbService();
+            dbService.UpdateDbMy(apartComplexes);
         }
 
         private void PrintData()

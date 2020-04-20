@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace DataAgregationService.ParsedData.LunUa
+﻿namespace DataAgregationService.ParsedData.LunUa
 {
     struct CityData
     {

@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using DataAgregationService.Models;
 
-namespace DataAgregationService.Parsers
+namespace DataAgregationService.Interfaces
 {
     interface IApartmentParser
     {

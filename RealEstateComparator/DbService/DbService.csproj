@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netcoreapp3.1</TargetFramework>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="5.0.0-preview.2.20159.4" />
+      <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="5.0.0-preview.2.20160.3" />
+      <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="5.0.0-preview.2.20160.3" />
+      <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="3.1.1" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Include="..\DataAgregationService\Interfaces\IDbService.cs">
+        <Link>Interfaces\IDbService.cs</Link>
+      </Compile>
+      <Compile Include="..\DataAgregationService\Models\ApartComplex.cs">
+        <Link>Models\ApartComplex.cs</Link>
+      </Compile>
+      <Compile Include="..\DataAgregationService\Models\Apartment.cs">
+        <Link>Models\Apartment.cs</Link>
+      </Compile>
+    </ItemGroup>
+
+</Project>

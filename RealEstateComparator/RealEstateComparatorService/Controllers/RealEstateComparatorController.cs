@@ -1,5 +1,4 @@
-﻿using DataAgregationService.Db;
-using DataAgregationService.Models;
+﻿using DataAgregationService.Models;
 using Microsoft.AspNetCore.Mvc;
 using RealEstateComparatorService.Classes;
 using RealEstateComparatorService.Services;

@@ -1,4 +1,4 @@
-﻿using DataAgregationService.Parsers;
+﻿using DataAgregationService.Interfaces;
 
 namespace DataAgregationService
 {
