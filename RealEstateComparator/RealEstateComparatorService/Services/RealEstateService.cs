@@ -1,32 +1,32 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using DataAgregationService.Models;
-using RealEstateComparatorService.Classes;
+using ApplicationContext.Models;
+using ApplicationContextRepositories;
+using ApplicationContextRepositories.Dto;
 
 namespace RealEstateComparatorService.Services
 {
     public class RealEstateService
     {
-        private ApplicationContext _dbContext = new ApplicationContext();
+        private readonly IApartmentRepository _apartmentRepository;
 
-        private IQueryable<Apartment> SelectApartmentsByPhisicalSpecs(ApartmentSpecifications apartmentSpecs)
+        public RealEstateService()
         {
-            try
-            {
-                var apartments = _dbContext.Apartments
-                    .Where(apartment => apartmentSpecs.City == apartment.Complex.CityName)
-                    .Where(apartment => apartmentSpecs.NumberOfRooms == apartment.NumberOfRooms)
-                    .Where(apartment => (apartmentSpecs.DwellingSpace >= apartment.DwellingSpaceMin && apartmentSpecs.DwellingSpace <= apartment.DwellingSpaceMax));
+            _apartmentRepository = new ApartmentRepository();
+        }
 
-                return apartments;
-            }
-            catch (Exception ex)
-            {
-                // Log
-            }
+        public IEnumerable<Apartment> GetBetterApartments(ApartmentSpecsDto apartmentSpecs)
+        {
+            var apartmentsByPhysicalSpecs = SelectApartmentsByPhysicalsSpecs(apartmentSpecs);
+            var betterApartments = SelectApartmentsByPriceSpecs(apartmentsByPhysicalSpecs, apartmentSpecs);
 
-            return null;
+            return betterApartments.ToList();
+        }
+
+        private IEnumerable<Apartment> SelectApartmentsByPhysicalsSpecs(ApartmentSpecsDto apartmentSpecs)
+        {
+            return _apartmentRepository.GetApartments(apartmentSpecs);
         }
 
         private int CalculateSquareMeterPrice(Apartment apartment, int dwellingSpace)
@@ -52,7 +52,7 @@ namespace RealEstateComparatorService.Services
             return apartmentPrice;
         }
 
-        private IQueryable<Apartment> SelectApartmentsByPrice(IEnumerable<Apartment> comparableApartments, ApartmentSpecifications apartmentSpecs)
+        private IEnumerable<Apartment> SelectApartmentsByPriceSpecs(IEnumerable<Apartment> comparableApartments, ApartmentSpecsDto apartmentSpecs)
         {
             try
             {
@@ -66,8 +66,7 @@ namespace RealEstateComparatorService.Services
 
                          var isItProfitable = apartPriceWithRenovation < apartmentSpecs.OverallPrice;
                          return isItProfitable;
-                     })
-                     .AsQueryable();
+                     });
 
                 return apartments;
             }
@@ -77,14 +76,6 @@ namespace RealEstateComparatorService.Services
             }
 
             return null;
-        }
-
-        public IEnumerable<Apartment> GetBetterApartments(ApartmentSpecifications apartmentSpecs)
-        {
-            var apartmentsByPhisicalSpecs = SelectApartmentsByPhisicalSpecs(apartmentSpecs);
-            var betterApartments = SelectApartmentsByPrice(apartmentsByPhisicalSpecs, apartmentSpecs);
-
-            return betterApartments.ToList();
         }
     }
 }

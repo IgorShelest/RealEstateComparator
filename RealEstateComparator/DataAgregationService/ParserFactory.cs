@@ -1,6 +1,6 @@
-﻿using DataAgregationService.Interfaces;
+﻿using DataAggregationService.Interfaces;
 
-namespace DataAgregationService
+namespace DataAggregationService
 {
     static class ParserFactory
     {

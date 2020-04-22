@@ -1,12 +1,12 @@
 ﻿using System.Threading.Tasks;
 
-namespace DataAgregationService
+namespace DataAggregationService
 {
     class Program
     {
         static async Task Main(string[] args)
         {
-            var dataAgregator = new DataAgregator();
+            var dataAgregator = new DataAggregator();
             await dataAgregator.Run();
         }
     }

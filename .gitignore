@@ -6,3 +6,8 @@ RealEstateComparator/RealEstateComparatorService/bin/
 Properties
 RealEstateComparator/.idea
 RealEstateComparator/DbService/obj
+RealEstateComparator/ApplicationContext/bin
+RealEstateComparator/ApplicationContext/obj
+RealEstateComparator/ApplicationContextRepositories/bin
+RealEstateComparator/ApplicationContextRepositories/obj
+RealEstateComparator/IRealEstateComparator/obj

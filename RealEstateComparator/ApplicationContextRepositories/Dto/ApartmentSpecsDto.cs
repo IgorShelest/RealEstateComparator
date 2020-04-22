@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace RealEstateComparatorService.Classes
+﻿namespace ApplicationContextRepositories.Dto
 {
-    public class ApartmentSpecifications
+    public class ApartmentSpecsDto
     {
         public string City { get; set; }
 

@@ -1,9 +1,6 @@
-﻿using DataAgregationService.Models;
+﻿using ApplicationContextRepositories.Dto;
 using Microsoft.AspNetCore.Mvc;
-using RealEstateComparatorService.Classes;
 using RealEstateComparatorService.Services;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace RealEstateComparatorService.Controllers
 {
@@ -12,7 +9,7 @@ namespace RealEstateComparatorService.Controllers
     public class RealEstateComparatorController : ControllerBase
     {
         [HttpPost]
-        public IActionResult ProposeBetterApartments(ApartmentSpecifications apartmentSpecs)
+        public IActionResult ProposeBetterApartments(ApartmentSpecsDto apartmentSpecs)
         {
             if (!ModelState.IsValid)
                 return BadRequest();

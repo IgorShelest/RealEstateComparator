@@ -1,4 +1,4 @@
-﻿namespace DataAgregationService.ParsedData.LunUa
+﻿namespace DataAggregationService.ParsedData.LunUa
 {
     struct ApartComplexesDataPerCity
     {

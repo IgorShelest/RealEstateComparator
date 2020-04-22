@@ -1,4 +1,4 @@
-﻿namespace DataAgregationService.Models
+﻿namespace ApplicationContext.Models
 {
     public class Apartment
     {

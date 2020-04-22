@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace DataAgregationService.Models
+namespace ApplicationContext.Models
 {
     public class ApartComplex
     {

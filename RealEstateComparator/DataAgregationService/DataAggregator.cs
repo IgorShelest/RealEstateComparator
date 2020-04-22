@@ -2,21 +2,22 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using DataAgregationService.Interfaces;
-using DataAgregationService.Parsers.LunUa;
-using DataAgregationService.Models;
+using ApplicationContext.Models;
+using ApplicationContextRepositories;
+using DataAggregationService.Interfaces;
+using DataAggregationService.Parsers.LunUa;
 
-namespace DataAgregationService
+namespace DataAggregationService
 {
-    public class DataAgregator
+    public class DataAggregator
     {
-        private DbService.DbService _dbService;
+        private readonly IApartComplexRepository _apartComplexRepository;
         private IEnumerable<ApartComplex> _apartComplexes;
         private IEnumerable<IApartmentParser> _parsers;
 
-        public DataAgregator()
+        public DataAggregator()
         {
-            _dbService = new DbService.DbService();
+            _apartComplexRepository = new ApartComplexRepository();
             _parsers = new List<IApartmentParser>();
         }
 
@@ -51,9 +52,7 @@ namespace DataAgregationService
 
         private void UpdateDb()
         {
-            IEnumerable<ApartComplex> apartComplexes = new List<ApartComplex>();
-            DbService.DbService dbService = new DbService.DbService();
-            dbService.UpdateDbMy(apartComplexes);
+            _apartComplexRepository.UpdateDb(_apartComplexes);
         }
 
         private void PrintData()

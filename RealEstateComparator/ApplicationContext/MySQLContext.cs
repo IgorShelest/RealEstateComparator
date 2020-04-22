@@ -1,25 +1,23 @@
-﻿using System.Collections.Generic;
-using System.IO;
-using DataAgregationService.Models;
-using DataAgregationService.Interfaces;
+﻿using System.IO;
+using ApplicationContext.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
-namespace DbService
+namespace ApplicationContext
 {
-    public class DbService : DbContext
+    public class MySQLContext: DbContext, IApplicationContext
     {
-        private DbSet<ApartComplex> _apartComplexes { get; set; }
-        private DbSet<Apartment> _apartments { get; set; }
-        
-        public DbService()
+        public DbSet<ApartComplex> ApartComplexes { get; set; }
+        public DbSet<Apartment> Apartments { get; set; }
+
+        public MySQLContext()
         {
-            Database.Migrate();
+            // Database.Migrate();
+            Database.EnsureCreated();
         }
 
-        public void UpdateDbMy(IEnumerable<ApartComplex> apartComplexes)
+        public void Save()
         {
-            _apartComplexes.AddRange(apartComplexes);
             SaveChanges();
         }
 

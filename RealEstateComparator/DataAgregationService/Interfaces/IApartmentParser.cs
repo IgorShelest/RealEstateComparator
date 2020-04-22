@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using DataAgregationService.Models;
+using ApplicationContext.Models;
 
-namespace DataAgregationService.Interfaces
+namespace DataAggregationService.Interfaces
 {
     interface IApartmentParser
     {

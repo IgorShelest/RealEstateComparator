@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using DataAgregationService.Interfaces;
-using DataAgregationService.Models;
-using DataAgregationService.ParsedData.LunUa;
+using ApplicationContext.Models;
+using DataAggregationService.Interfaces;
+using DataAggregationService.ParsedData.LunUa;
 using HtmlAgilityPack;
 
-namespace DataAgregationService.Parsers.LunUa
+namespace DataAggregationService.Parsers.LunUa
 {
     class LunUaApartmentParser : IApartmentParser
     {
