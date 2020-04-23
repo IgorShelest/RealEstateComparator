@@ -58,7 +58,7 @@ namespace DataAggregationService.Parsers.LunUa
 
         private async Task<HtmlNodeCollection> LoadCityHtml()
         {
-            const string cityXPath = "//*[@id='geo-control']/div[2]/div[2]/div/div[4]/a[*]";
+            const string cityXPath = "//*[@id='geo-control']/div[3]/div[2]/div/div[4]/a[*]";
             return await LoadHtmlNodes(_homePageUrl, cityXPath);
         }
 
