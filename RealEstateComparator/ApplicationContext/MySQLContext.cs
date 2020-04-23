@@ -32,5 +32,24 @@ namespace ApplicationContext
         
             optionsBuilder.UseMySql(connectionString);
         }
+        
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Apartment>().HasOne(a => a.Complex);
+            modelBuilder.Entity<Apartment>().HasKey(a => a.Id);
+            modelBuilder.Entity<Apartment>().Property(a => a.NumberOfRooms).IsRequired();
+            modelBuilder.Entity<Apartment>().Property(a => a.DwellingSpaceMin).IsRequired();
+            modelBuilder.Entity<Apartment>().Property(a => a.DwellingSpaceMax).IsRequired();
+            modelBuilder.Entity<Apartment>().Property(a => a.SquareMeterPriceMin).IsRequired();
+            modelBuilder.Entity<Apartment>().Property(a => a.SquareMeterPriceMax).IsRequired();
+
+            modelBuilder.Entity<ApartComplex>().HasMany(c => c.Apartments);
+            modelBuilder.Entity<ApartComplex>().HasKey(c => c.Id);
+            modelBuilder.Entity<ApartComplex>().Property(c => c.Name).IsRequired();
+            modelBuilder.Entity<ApartComplex>().Property(c => c.CityName).IsRequired();
+            modelBuilder.Entity<ApartComplex>().Property(c => c.Url).IsRequired();
+            
+            base.OnModelCreating(modelBuilder);
+        }
     }
 }

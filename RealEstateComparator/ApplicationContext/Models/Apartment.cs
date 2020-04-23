@@ -14,8 +14,6 @@
 
         public int SquareMeterPriceMax { get; set; }
 
-        public int ComplexId { get; set; }
-
         public ApartComplex Complex { get; set; }
     }
 }
