@@ -249,12 +249,14 @@ namespace DataAggregationService.Parsers.LunUa
         private Apartment CreateApartment(HtmlNode node)
         {
             var numOfRooms = ParseHtmlNumOfRooms(node);
+            var hasMultipleFloors = HasMultipleFloors(node);
             var roomSpace = ParseHtmlRoomSpace(node);
             var price = ParseHtmlApartPrice(node);
 
             return new Apartment
             {
                 NumberOfRooms = numOfRooms,
+                HasMultipleFloors = hasMultipleFloors,
                 DwellingSpaceMin = roomSpace.Item1,
                 DwellingSpaceMax = roomSpace.Item2,
                 SquareMeterPriceMin = price.Item1,
@@ -262,30 +264,32 @@ namespace DataAggregationService.Parsers.LunUa
             };
         }
 
-        private string ParseHtmlNumOfRooms(HtmlNode apartment)
+        private string LoadHtmlNumOfRoomsOrFloors(HtmlNode apartment)
         {
             const string numOfRoomsXPath = "/div[2]/div[1]";
-            IEnumerable<string> numOfRoomsPatterns = new List<string>
-            {
-                @"^(?<num>\d+)",
-                @"^(?<num>[А-ЯІ][а-яі]+)"
-            };
+            return RemoveSpaces(apartment.SelectSingleNode(apartment.XPath + numOfRoomsXPath).InnerText);
+        }
 
-            var numOfRoomsText = RemoveSpaces(apartment.SelectSingleNode(apartment.XPath + numOfRoomsXPath).InnerText);
+        private int ParseHtmlNumOfRooms(HtmlNode apartment)
+        {
+            const string numOfRoomsPattern = @"^(?<num>\d+)";
+            var numOfRoomsRegex = new Regex(numOfRoomsPattern);
+            
+            var numOfRoomsText = LoadHtmlNumOfRoomsOrFloors(apartment);
+            var match = numOfRoomsRegex.Match(HtmlEntity.DeEntitize(numOfRoomsText));
+            
+            return match.Success ? int.Parse(match.Groups["num"].Value) : default;
+        }
 
-            foreach (var pattern in numOfRoomsPatterns)
-            {
-                Regex numOfRoomsPattern = new Regex(pattern);
-                Match match = numOfRoomsPattern.Match(HtmlEntity.DeEntitize(numOfRoomsText));
+        private bool HasMultipleFloors(HtmlNode apartment)
+        {
+            const string numOfFloorsPattern = @"^(?<num>[А-ЯІ][а-яі]+)";
+            var numOfRoomsPattern = new Regex(numOfFloorsPattern);
+            
+            var numOfFloorsText = LoadHtmlNumOfRoomsOrFloors(apartment);
+            var match = numOfRoomsPattern.Match(HtmlEntity.DeEntitize(numOfFloorsText));
 
-                if (match.Success)
-                {
-                    string numOfRooms = match.Groups["num"].Value;
-                    return numOfRooms;
-                }
-            }
-
-            return default;
+            return match.Success;
         }
 
         private Tuple<int, int> ParseHtmlRoomSpace(HtmlNode apartment)

@@ -20,6 +20,7 @@ namespace ApplicationContextRepositories
             var apartments = _applicationContext.Apartments
                 .Where(apartment => apartmentSpecs.City == apartment.Complex.CityName)
                 .Where(apartment => apartmentSpecs.NumberOfRooms == apartment.NumberOfRooms)
+                .Where(apartment => apartmentSpecs.HasMultipleFloors == apartment.HasMultipleFloors)
                 .Where(apartment => (apartmentSpecs.DwellingSpace >= apartment.DwellingSpaceMin && apartmentSpecs.DwellingSpace <= apartment.DwellingSpaceMax));
 
             return apartments;

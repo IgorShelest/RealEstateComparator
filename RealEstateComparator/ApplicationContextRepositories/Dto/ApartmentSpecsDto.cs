@@ -4,7 +4,9 @@
     {
         public string City { get; set; }
 
-        public string NumberOfRooms { get; set; }
+        public int NumberOfRooms { get; set; }
+                        
+        public bool HasMultipleFloors { get; set; }
 
         public int DwellingSpace { get; set; }
 
