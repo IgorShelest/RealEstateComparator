@@ -6,19 +6,20 @@ using ApplicationContext.Models;
 using ApplicationContextRepositories;
 using DataAggregationService.Interfaces;
 using DataAggregationService.Parsers.LunUa;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace DataAggregationService
 {
     public class DataAggregator
     {
         private readonly IApartComplexRepository _apartComplexRepository;
-        private IEnumerable<ApartComplex> _apartComplexes;
         private IEnumerable<IApartmentParser> _parsers;
+        private IEnumerable<ApartComplex> _apartComplexes;
 
-        public DataAggregator()
+        public DataAggregator(IApartComplexRepository apartComplexRepository, IEnumerable<IApartmentParser> parsers)
         {
-            _apartComplexRepository = new ApartComplexRepository();
-            _parsers = new List<IApartmentParser>();
+            _apartComplexRepository = apartComplexRepository;
+            _parsers = parsers;
         }
 
         public async Task Run()

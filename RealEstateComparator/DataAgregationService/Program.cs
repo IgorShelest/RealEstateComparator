@@ -1,4 +1,9 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
+using ApplicationContextRepositories;
+using DataAggregationService.Interfaces;
+using DataAggregationService.Parsers.LunUa;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace DataAggregationService
 {
@@ -6,8 +11,25 @@ namespace DataAggregationService
     {
         static async Task Main(string[] args)
         {
-            var dataAgregator = new DataAggregator();
-            await dataAgregator.Run();
+            using var scope = CreateScope();
+            var dataAggregator = scope.ServiceProvider.GetRequiredService<DataAggregator>();
+            await dataAggregator.Run();
+        }
+
+        private static ServiceCollection ConfigureServices()
+        {
+            var serviceCollection = new ServiceCollection();
+            serviceCollection.AddScoped<DataAggregator>();
+            serviceCollection.AddScoped<IApartComplexRepository, ApartComplexRepository>();
+            serviceCollection.AddScoped<IApartmentParser, LunUaApartmentParser>();
+            return serviceCollection;
+        }
+
+        private static IServiceScope CreateScope()
+        {
+            var serviceCollection = ConfigureServices();
+            var serviceProvider = serviceCollection.BuildServiceProvider();
+            return serviceProvider.CreateScope();
         }
     }
 }

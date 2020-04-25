@@ -4,7 +4,7 @@ using ApplicationContext.Models;
 
 namespace DataAggregationService.Interfaces
 {
-    interface IApartmentParser
+    public interface IApartmentParser
     {
         Task<IEnumerable<ApartComplex>> GetApartmentData();
     }
