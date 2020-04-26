@@ -7,13 +7,13 @@ using ApplicationContextRepositories.Dto;
 
 namespace RealEstateComparatorService.Services
 {
-    public class RealEstateService
+    public class RealEstateService : IRealEstateService
     {
         private readonly IApartmentRepository _apartmentRepository;
 
-        public RealEstateService()
+        public RealEstateService(IApartmentRepository apartmentRepository)
         {
-            _apartmentRepository = new ApartmentRepository();
+            _apartmentRepository = apartmentRepository;
         }
 
         public IEnumerable<Apartment> GetBetterApartments(ApartmentSpecsDto apartmentSpecs)
