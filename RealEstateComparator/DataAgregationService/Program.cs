@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using ApplicationContextRepositories;
+using ApplicationContextRepositories.DI;
 using DataAggregationService.Interfaces;
 using DataAggregationService.Parsers.LunUa;
 using Microsoft.Extensions.DependencyInjection;
@@ -22,6 +23,7 @@ namespace DataAggregationService
             serviceCollection.AddScoped<DataAggregator>();
             serviceCollection.AddScoped<IApartComplexRepository, ApartComplexRepository>();
             serviceCollection.AddScoped<IApartmentParser, LunUaApartmentParser>();
+            serviceCollection.AddApplicationContextRepositories();
             return serviceCollection;
         }
 

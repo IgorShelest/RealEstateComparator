@@ -1,4 +1,5 @@
 using ApplicationContextRepositories;
+using ApplicationContextRepositories.DI;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -23,6 +24,7 @@ namespace RealEstateComparatorService
             services.AddControllers();
             services.AddScoped<IRealEstateService, RealEstateService>();
             services.AddScoped<IApartmentRepository, ApartmentRepository>();
+            services.AddApplicationContextRepositories();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

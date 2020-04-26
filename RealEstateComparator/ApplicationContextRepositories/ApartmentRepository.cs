@@ -10,9 +10,9 @@ namespace ApplicationContextRepositories
     {
         private readonly IApplicationContext _applicationContext;
 
-        public ApartmentRepository()
+        public ApartmentRepository(IApplicationContext applicationContext)
         {
-            _applicationContext = new MySQLContext();
+            _applicationContext = applicationContext;
         }
 
         public IEnumerable<Apartment> GetApartments(ApartmentSpecsDto apartmentSpecs)

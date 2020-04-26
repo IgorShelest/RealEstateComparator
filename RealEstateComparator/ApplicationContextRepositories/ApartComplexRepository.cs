@@ -8,9 +8,9 @@ namespace ApplicationContextRepositories
     {
         private readonly IApplicationContext _applicationContext;
 
-        public ApartComplexRepository()
+        public ApartComplexRepository(IApplicationContext applicationContext)
         {
-            _applicationContext = new MySQLContext();
+            _applicationContext = applicationContext;
         }
 
         public void UpdateDb(IEnumerable<ApartComplex> apartComplexes)
