@@ -24,16 +24,10 @@ namespace DataAggregationService
 
         public async Task Run()
         {
-            InitializeParsers();
             await GetData();
             ValidateData();
             PrintData();
             UpdateDb();
-        }
-
-        private void InitializeParsers()
-        {
-            _parsers = _parsers.Append(ParserFactory.CreateParser<LunUaApartmentParser>());
         }
 
         private async Task GetData()
