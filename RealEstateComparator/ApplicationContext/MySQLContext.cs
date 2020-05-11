@@ -35,19 +35,25 @@ namespace ApplicationContext
         
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Apartment>().HasOne(a => a.Complex);
-            modelBuilder.Entity<Apartment>().HasKey(a => a.Id);
-            modelBuilder.Entity<Apartment>().Property(a => a.HasMultipleFloors).IsRequired();
-            modelBuilder.Entity<Apartment>().Property(a => a.DwellingSpaceMin).IsRequired();
-            modelBuilder.Entity<Apartment>().Property(a => a.DwellingSpaceMax).IsRequired();
-            modelBuilder.Entity<Apartment>().Property(a => a.SquareMeterPriceMin).IsRequired();
-            modelBuilder.Entity<Apartment>().Property(a => a.SquareMeterPriceMax).IsRequired();
+            modelBuilder.Entity<Apartment>(entity =>
+            {
+                entity.HasOne(a => a.Complex);
+                entity.HasKey(a => a.Id);
+                entity.Property(a => a.HasMultipleFloors).IsRequired();
+                entity.Property(a => a.DwellingSpaceMin).IsRequired();
+                entity.Property(a => a.DwellingSpaceMax).IsRequired();
+                entity.Property(a => a.SquareMeterPriceMin).IsRequired();
+                entity.Property(a => a.SquareMeterPriceMax).IsRequired();
+            });
 
-            modelBuilder.Entity<ApartComplex>().HasMany(c => c.Apartments);
-            modelBuilder.Entity<ApartComplex>().HasKey(c => c.Id);
-            modelBuilder.Entity<ApartComplex>().Property(c => c.Name).HasMaxLength(50).IsRequired();
-            modelBuilder.Entity<ApartComplex>().Property(c => c.CityName).HasMaxLength(50).IsRequired();
-            modelBuilder.Entity<ApartComplex>().Property(c => c.Url).HasMaxLength(200).IsRequired();
+            modelBuilder.Entity<ApartComplex>(entity =>
+            {
+                entity.HasMany(c => c.Apartments);
+                entity.HasKey(c => c.Id);
+                entity.Property(c => c.Name).HasMaxLength(50).IsRequired();
+                entity.Property(c => c.CityName).HasMaxLength(50).IsRequired();
+                entity.Property(c => c.Url).HasMaxLength(200).IsRequired();
+            });
             
             base.OnModelCreating(modelBuilder);
         }
