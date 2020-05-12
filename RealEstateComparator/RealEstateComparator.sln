@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataAgregationService", "Da
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RealEstateComparatorService", "RealEstateComparatorService\RealEstateComparatorService.csproj", "{95EE97A5-5F88-455E-B135-BE92AEAED2F2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApplicationContext", "ApplicationContext\ApplicationContext.csproj", "{BB4D0B2D-41A6-455D-8693-FF7DB5A44E0A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApplicationContexts", "ApplicationContexts\ApplicationContexts.csproj", "{BB4D0B2D-41A6-455D-8693-FF7DB5A44E0A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApplicationContextRepositories", "ApplicationContextRepositories\ApplicationContextRepositories.csproj", "{D2AAB493-1367-4497-BAC0-31C74BCB94A2}"
 EndProject

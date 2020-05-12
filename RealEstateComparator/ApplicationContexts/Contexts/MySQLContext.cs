@@ -1,9 +1,9 @@
 ﻿using System.IO;
-using ApplicationContext.Models;
+using ApplicationContexts.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
-namespace ApplicationContext
+namespace ApplicationContexts
 {
     public class MySQLContext: DbContext, IApplicationContext
     {

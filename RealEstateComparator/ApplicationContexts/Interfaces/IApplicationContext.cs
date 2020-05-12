@@ -1,7 +1,7 @@
-using ApplicationContext.Models;
+using ApplicationContexts.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace ApplicationContext
+namespace ApplicationContexts
 {
     public interface IApplicationContext
     {

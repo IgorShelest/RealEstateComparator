@@ -1,5 +1,5 @@
-using ApplicationContext;
-using ApplicationContext.Models;
+using ApplicationContexts;
+using ApplicationContexts.Models;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace ApplicationContextRepositories.DI
