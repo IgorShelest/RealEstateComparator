@@ -9,10 +9,12 @@ namespace ApplicationContexts
     {
         public DbSet<ApartComplex> ApartComplexes { get; set; }
         public DbSet<Apartment> Apartments { get; set; }
+        private readonly string  _connectionString;
 
-        public MySQLContext()
+        public MySQLContext(string connectionString)
         {
             // Database.Migrate();
+            _connectionString = connectionString;
             Database.EnsureCreated();
         }
 
@@ -23,14 +25,7 @@ namespace ApplicationContexts
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            var configBuilder = new ConfigurationBuilder();
-            configBuilder.SetBasePath(Directory.GetCurrentDirectory());
-            configBuilder.AddJsonFile("appsettings.json");
-        
-            var config = configBuilder.Build();
-            string connectionString = config.GetConnectionString("DefaultConnection");
-        
-            optionsBuilder.UseMySql(connectionString);
+            optionsBuilder.UseMySql(_connectionString);
         }
         
         protected override void OnModelCreating(ModelBuilder modelBuilder)

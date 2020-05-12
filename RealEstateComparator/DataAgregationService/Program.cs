@@ -1,9 +1,12 @@
 ﻿using System;
+using System.IO;
 using System.Threading.Tasks;
 using ApplicationContextRepositories;
 using ApplicationContexts;
 using DataAggregationService.Interfaces;
 using DataAggregationService.Parsers.LunUa;
+using DataAggregationService.Services;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace DataAggregationService
@@ -20,12 +23,11 @@ namespace DataAggregationService
         private static ServiceCollection ConfigureServices()
         {
             var serviceCollection = new ServiceCollection();
-            
+
+            serviceCollection.AddSingleton<IConfigHandler>(service => new ConfigHandler("appsettings.json"));
             serviceCollection.AddScoped<DataAggregator>();
-            
-            serviceCollection.AddScoped<IApplicationContext, MySQLContext>();
+            serviceCollection.AddScoped<IApplicationContext>(service => new MySQLContext(service.GetRequiredService<IConfigHandler>().GetConnectionString()));
             serviceCollection.AddScoped<IApartComplexRepository>(service => new ApartComplexRepository(service.GetRequiredService<IApplicationContext>()));
-            
             serviceCollection.AddScoped<IApartmentParser, LunUaApartmentParser>();
             
             return serviceCollection;
