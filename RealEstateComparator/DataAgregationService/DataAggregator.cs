@@ -5,8 +5,6 @@ using System.Threading.Tasks;
 using ApplicationContexts.Models;
 using ApplicationContextRepositories;
 using DataAggregationService.Interfaces;
-using DataAggregationService.Parsers.LunUa;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace DataAggregationService
 {

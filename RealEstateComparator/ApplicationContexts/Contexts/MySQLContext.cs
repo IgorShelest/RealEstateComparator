@@ -1,7 +1,5 @@
-﻿using System.IO;
-using ApplicationContexts.Models;
+﻿using ApplicationContexts.Models;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 
 namespace ApplicationContexts
 {
