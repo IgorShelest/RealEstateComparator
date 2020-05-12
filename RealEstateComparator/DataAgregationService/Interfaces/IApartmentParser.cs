@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using ApplicationContext.Models;
+using ApplicationContexts.Models;
 
 namespace DataAggregationService.Interfaces
 {

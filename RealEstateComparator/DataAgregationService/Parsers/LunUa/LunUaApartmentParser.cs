@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using ApplicationContext.Models;
+using ApplicationContexts.Models;
 using DataAggregationService.Interfaces;
 using DataAggregationService.ParsedData.LunUa;
 using HtmlAgilityPack;

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using ApplicationContextRepositories;
-using ApplicationContextRepositories.DI;
+using ApplicationContexts;
 using DataAggregationService.Interfaces;
 using DataAggregationService.Parsers.LunUa;
 using Microsoft.Extensions.DependencyInjection;
@@ -20,10 +20,14 @@ namespace DataAggregationService
         private static ServiceCollection ConfigureServices()
         {
             var serviceCollection = new ServiceCollection();
+            
             serviceCollection.AddScoped<DataAggregator>();
-            serviceCollection.AddScoped<IApartComplexRepository, ApartComplexRepository>();
+            
+            serviceCollection.AddScoped<IApplicationContext, MySQLContext>();
+            serviceCollection.AddScoped<IApartComplexRepository>(service => new ApartComplexRepository(service.GetRequiredService<IApplicationContext>()));
+            
             serviceCollection.AddScoped<IApartmentParser, LunUaApartmentParser>();
-            serviceCollection.AddApplicationContextRepositories();
+            
             return serviceCollection;
         }
 
