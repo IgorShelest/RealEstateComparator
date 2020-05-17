@@ -57,6 +57,8 @@ namespace DataAgregationService.Parsers.LunUa
         {
             const string pageNumberXPath = "//*[@id='search-results']/div[4]/div/button[@data-analytics-click='catalog|pagination|page_click']";
             var htmlNodes = await LoadHtmlNodes(currentPageUrl, pageNumberXPath);
+            if (htmlNodes == null)
+                return false;
 
             const string activePageTag = "-active";
             var activePageNode = htmlNodes.FirstOrDefault(node => node.Attributes["class"].Value == activePageTag);

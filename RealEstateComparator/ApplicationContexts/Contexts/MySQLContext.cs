@@ -43,6 +43,7 @@ namespace ApplicationContexts
             {
                 entity.HasMany(c => c.Apartments);
                 entity.HasKey(c => c.Id);
+                entity.Property(c => c.Source).HasMaxLength(50).IsRequired();
                 entity.Property(c => c.Name).HasMaxLength(50).IsRequired();
                 entity.Property(c => c.CityName).HasMaxLength(50).IsRequired();
                 entity.Property(c => c.Url).HasMaxLength(200).IsRequired();

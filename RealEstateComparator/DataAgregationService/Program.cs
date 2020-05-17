@@ -2,6 +2,7 @@
 using ApplicationContextRepositories;
 using ApplicationContexts;
 using DataAggregationService.Interfaces;
+using DataAggregationService.Parsers.DomRia;
 using DataAggregationService.Parsers.LunUa;
 using DataAggregationService.Services;
 using Microsoft.Extensions.DependencyInjection;
@@ -26,6 +27,7 @@ namespace DataAggregationService
             serviceCollection.AddScoped<IApplicationContext>(service => new MySQLContext(service.GetRequiredService<IConfigHandler>().GetConnectionString()));
             serviceCollection.AddScoped<IApartComplexRepository>(service => new ApartComplexRepository(service.GetRequiredService<IApplicationContext>()));
             serviceCollection.AddScoped<IApartmentParser, LunUaApartmentParser>();
+            serviceCollection.AddScoped<IApartmentParser, DomRiaApartmentParser>();
             
             return serviceCollection;
         }

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using ApplicationContexts.Models;
 using DataAggregationService.Interfaces;
-using DataAggregationService.ParsedData.LunUa;
+using DataAggregationService.Parsers.Common;
 using DataAgregationService.Parsers.LunUa;
 using HtmlAgilityPack;
 
@@ -13,6 +13,7 @@ namespace DataAggregationService.Parsers.LunUa
     class LunUaApartmentParser : IApartmentParser
     {
         private readonly HtmlHandler _htmlHandler;
+        private const string _source = "LunUa";
 
         public LunUaApartmentParser()
         {
@@ -99,7 +100,7 @@ namespace DataAggregationService.Parsers.LunUa
                 currentPageUrl = _htmlHandler.CreatePageUrl(apartComplexesDataPerCity.Url, pageNumber++);
                 apartComplexesPerPage.AddRange(await GetApartComplexesForPage(currentPageUrl, apartComplexesDataPerCity.CityName));
             }
-            while (false); // (NextPageExists(currentPageUrl));
+            while (false); // (await _htmlHandler.NextPageExists(currentPageUrl));
 
             return apartComplexesPerPage;
         }
@@ -147,6 +148,7 @@ namespace DataAggregationService.Parsers.LunUa
         {
             return new ApartComplex()
             {
+                Source = _source,
                 Name = _htmlHandler.ParseApartComplexText(complex),
                 CityName = cityName,
                 Url = _htmlHandler.CreateUrl(_htmlHandler.ParseApartComplexHRef(complex))
