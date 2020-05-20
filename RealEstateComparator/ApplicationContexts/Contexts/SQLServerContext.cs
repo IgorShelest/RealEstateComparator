@@ -13,8 +13,6 @@ namespace ApplicationContexts
         {
             if (_connectionString == null)
                 _connectionString = @"Data Source = (localdb)\MSSQLLocalDB; Initial Catalog = 'New Database'; Integrated Security = True; Connect Timeout = 30; Encrypt = False; TrustServerCertificate = False; ApplicationIntent = ReadWrite; MultiSubnetFailover = False";
-
-            //Database.Migrate();
         }
 
         public SQLServerContext(string connectionString)
@@ -22,7 +20,6 @@ namespace ApplicationContexts
             _connectionString = connectionString;
 
             Database.Migrate();
-
             //Database.EnsureCreated();
         }
 
