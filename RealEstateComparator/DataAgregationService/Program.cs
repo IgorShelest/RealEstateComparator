@@ -24,11 +24,11 @@ namespace DataAggregationService
 
             serviceCollection.AddSingleton<IConfigHandler>(service => new ConfigHandler("appsettings.json"));
             serviceCollection.AddScoped<DataAggregator>();
-            serviceCollection.AddScoped<IApplicationContext>(service => new MySQLContext(service.GetRequiredService<IConfigHandler>().GetConnectionString()));
+            serviceCollection.AddScoped<IApplicationContext>(service => new SQLServerContext(service.GetRequiredService<IConfigHandler>().GetConnectionString()));
             serviceCollection.AddScoped<IApartComplexRepository>(service => new ApartComplexRepository(service.GetRequiredService<IApplicationContext>()));
             serviceCollection.AddScoped<IApartmentParser, LunUaApartmentParser>();
             serviceCollection.AddScoped<IApartmentParser, DomRiaApartmentParser>();
-            
+
             return serviceCollection;
         }
 

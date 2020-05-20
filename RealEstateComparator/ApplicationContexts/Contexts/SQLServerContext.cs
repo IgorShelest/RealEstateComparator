@@ -3,29 +3,39 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ApplicationContexts
 {
-    public class SQLServerContext: DbContext, IApplicationContext
+    public class SQLServerContext : DbContext, IApplicationContext
     {
         public DbSet<ApartComplex> ApartComplexes { get; set; }
         public DbSet<Apartment> Apartments { get; set; }
-        private readonly string  _connectionString;
+        private readonly string _connectionString;
+
+        public SQLServerContext()
+        {
+            if (_connectionString == null)
+                _connectionString = @"Data Source = (localdb)\MSSQLLocalDB; Initial Catalog = 'New Database'; Integrated Security = True; Connect Timeout = 30; Encrypt = False; TrustServerCertificate = False; ApplicationIntent = ReadWrite; MultiSubnetFailover = False";
+
+            //Database.Migrate();
+        }
 
         public SQLServerContext(string connectionString)
         {
-            // Database.Migrate();
             _connectionString = connectionString;
-            Database.EnsureCreated();
+
+            Database.Migrate();
+
+            //Database.EnsureCreated();
         }
 
         public void Save()
         {
             SaveChanges();
         }
-        
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseSqlServer(_connectionString);
         }
-        
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Apartment>(entity =>
@@ -48,7 +58,7 @@ namespace ApplicationContexts
                 entity.Property(c => c.CityName).HasMaxLength(50).IsRequired();
                 entity.Property(c => c.Url).HasMaxLength(200).IsRequired();
             });
-            
+
             base.OnModelCreating(modelBuilder);
         }
     }
