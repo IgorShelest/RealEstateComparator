@@ -9,7 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace DataAggregationService
 {
-    class Program
+    static class Program
     {
         static async Task Main(string[] args)
         {
@@ -24,7 +24,7 @@ namespace DataAggregationService
 
             serviceCollection.AddSingleton<IConfigHandler>(service => new ConfigHandler("appsettings.json"));
             serviceCollection.AddScoped<DataAggregator>();
-            serviceCollection.AddScoped<IApplicationContext>(service => new SQLServerContext(service.GetRequiredService<IConfigHandler>().GetConnectionString()));
+            serviceCollection.AddScoped<IApplicationContext>(service => new SQLServerContext(service.GetRequiredService<IConfigHandler>().GetConnectionString("DefaultConnection")));
             serviceCollection.AddScoped<IApartComplexRepository>(service => new ApartComplexRepository(service.GetRequiredService<IApplicationContext>()));
             serviceCollection.AddScoped<IApartmentParser, LunUaApartmentParser>();
             serviceCollection.AddScoped<IApartmentParser, DomRiaApartmentParser>();

@@ -13,9 +13,9 @@ namespace DataAggregationService.Services
             _configRoot = configBuilder.Build();
         }
 
-        public string GetConnectionString()
+        public string GetConnectionString(string connectionStringName)
         {
-            return _configRoot.GetConnectionString("DefaultConnection");
+            return _configRoot.GetConnectionString(connectionStringName);
         }
     }
 }

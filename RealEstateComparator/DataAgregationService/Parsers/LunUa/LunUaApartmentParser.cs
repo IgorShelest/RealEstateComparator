@@ -12,12 +12,12 @@ namespace DataAggregationService.Parsers.LunUa
 {
     class LunUaApartmentParser : IApartmentParser
     {
-        private readonly HtmlHandler _htmlHandler;
+        private readonly HtmlHandlerLunUa _htmlHandlerLunUa;
         private const string _source = "LunUa";
 
         public LunUaApartmentParser()
         {
-            _htmlHandler = new HtmlHandler();
+            _htmlHandlerLunUa = new HtmlHandlerLunUa();
         }
 
         public async Task<IEnumerable<ApartComplex>> GetApartmentData()
@@ -56,7 +56,7 @@ namespace DataAggregationService.Parsers.LunUa
 
         private async Task<IEnumerable<CityData>> GetCityData()
         {
-            var cityHtml = await _htmlHandler.LoadCityHtml();
+            var cityHtml = await _htmlHandlerLunUa.LoadCityHtml();
             var cityData = CreateCityData(cityHtml);
             return cityData;
         }
@@ -66,8 +66,8 @@ namespace DataAggregationService.Parsers.LunUa
             var cityData = cityHtml?.Select(node =>
                 new CityData()
                 {
-                    Name = _htmlHandler.ParseText(node),
-                    Url = _htmlHandler.CreateUrl(_htmlHandler.ParseHref(node))
+                    Name = _htmlHandlerLunUa.ParseText(node),
+                    Url = _htmlHandlerLunUa.CreateUrl(_htmlHandlerLunUa.ParseHref(node))
                 }
             );
 
@@ -76,7 +76,7 @@ namespace DataAggregationService.Parsers.LunUa
 
         private async Task<ApartComplexesDataPerCity> GetApartComplexData(CityData cityData)
         {
-            var apartComplexGroupHtml = await _htmlHandler.LoadApartComplexDataHtml(cityData.Url);
+            var apartComplexGroupHtml = await _htmlHandlerLunUa.LoadApartComplexDataHtml(cityData.Url);
             return CreateApartComplexData(cityData, apartComplexGroupHtml);
         }
 
@@ -85,7 +85,7 @@ namespace DataAggregationService.Parsers.LunUa
             return new ApartComplexesDataPerCity
             {
                 CityName = cityData.Name,
-                Url = _htmlHandler.CreateUrl(_htmlHandler.ParseHref(parsedApartComplexGroupData))
+                Url = _htmlHandlerLunUa.CreateUrl(_htmlHandlerLunUa.ParseHref(parsedApartComplexGroupData))
             };
         }
 
@@ -97,10 +97,10 @@ namespace DataAggregationService.Parsers.LunUa
 
             do
             {
-                currentPageUrl = _htmlHandler.CreatePageUrl(apartComplexesDataPerCity.Url, pageNumber++);
+                currentPageUrl = _htmlHandlerLunUa.CreatePageUrl(apartComplexesDataPerCity.Url, pageNumber++);
                 apartComplexesPerPage.AddRange(await GetApartComplexesForPage(currentPageUrl, apartComplexesDataPerCity.CityName));
             }
-            while (false); // (await _htmlHandler.NextPageExists(currentPageUrl));
+            while /*(false); // */(await _htmlHandlerLunUa.NextPageExists(currentPageUrl));
 
             return apartComplexesPerPage;
         }
@@ -109,7 +109,7 @@ namespace DataAggregationService.Parsers.LunUa
         {
             try
             {
-                var apartComplexesHtml = await _htmlHandler.LoadApartComplexesHtml(currentPageUrl);
+                var apartComplexesHtml = await _htmlHandlerLunUa.LoadApartComplexesHtml(currentPageUrl);
                 var apartComplexes = CreateApartComplexes(apartComplexesHtml, cityName).ToList();
 
                 foreach (var complex in apartComplexes)
@@ -128,7 +128,7 @@ namespace DataAggregationService.Parsers.LunUa
         {
             try
             {
-                var htmlNodes = await _htmlHandler.LoadApartmentsHtml(url);
+                var htmlNodes = await _htmlHandlerLunUa.LoadApartmentsHtml(url);
                 var apartments = CreateApartmentsPerApartComplex(htmlNodes);
                 return apartments;
             }
@@ -149,9 +149,9 @@ namespace DataAggregationService.Parsers.LunUa
             return new ApartComplex()
             {
                 Source = _source,
-                Name = _htmlHandler.ParseApartComplexText(complex),
+                Name = _htmlHandlerLunUa.ParseApartComplexText(complex),
                 CityName = cityName,
-                Url = _htmlHandler.CreateUrl(_htmlHandler.ParseApartComplexHRef(complex))
+                Url = _htmlHandlerLunUa.CreateUrl(_htmlHandlerLunUa.ParseApartComplexHRef(complex))
             };
         }
 
@@ -163,10 +163,10 @@ namespace DataAggregationService.Parsers.LunUa
 
         private Apartment CreateApartment(HtmlNode node)
         {
-            var numOfRooms = _htmlHandler.ParseHtmlNumOfRooms(node);
-            var hasMultipleFloors = _htmlHandler.HasMultipleFloors(node);
-            var roomSpace = _htmlHandler.ParseHtmlRoomSpace(node);
-            var price = _htmlHandler.ParseHtmlApartPrice(node);
+            var numOfRooms = _htmlHandlerLunUa.ParseHtmlNumOfRooms(node);
+            var hasMultipleFloors = _htmlHandlerLunUa.HasMultipleFloors(node);
+            var roomSpace = _htmlHandlerLunUa.ParseHtmlRoomSpace(node);
+            var price = _htmlHandlerLunUa.ParseHtmlApartPrice(node);
 
             return new Apartment
             {

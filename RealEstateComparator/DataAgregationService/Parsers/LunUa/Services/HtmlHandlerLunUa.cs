@@ -7,7 +7,7 @@ using HtmlAgilityPack;
 
 namespace DataAgregationService.Parsers.LunUa
 {
-    public class HtmlHandler
+    public class HtmlHandlerLunUa
     {
         private static readonly string _homePageUrl = "https://lun.ua";
         
@@ -15,13 +15,6 @@ namespace DataAgregationService.Parsers.LunUa
         {
             const string cityXPath = "//*[@id='geo-control']/div[3]/div[2]/div/div[4]/a[*]";
             return await LoadHtmlNodes(_homePageUrl, cityXPath);
-        }
-        
-        private async Task<HtmlNodeCollection> LoadHtmlNodes(string url, string xPath)
-        {
-            var web = new HtmlWeb();
-            var htmlPage = await web.LoadFromWebAsync(url);
-            return htmlPage.DocumentNode.SelectNodes(xPath);
         }
 
         public string ParseText(HtmlNode htmlNode)
@@ -70,7 +63,7 @@ namespace DataAgregationService.Parsers.LunUa
 
         public async Task<HtmlNode> LoadApartComplexDataHtml(string url)
         {
-            const string apartComplexGroupXPath = "/html/body/div[3]/div[2]/div[2]/a";
+            const string apartComplexGroupXPath = "/html/body/div[3]/div[2]/div[2]/a[1]";
             var apartComplexes = await LoadHtmlNodes(url, apartComplexGroupXPath);
 
             return apartComplexes.First();
@@ -101,12 +94,6 @@ namespace DataAgregationService.Parsers.LunUa
                 Console.WriteLine(e);
                 return null;
             }
-        }
-
-        public string LoadHtmlNumOfRoomsOrFloors(HtmlNode apartment)
-        {
-            const string numOfRoomsXPath = "/div[2]/div[1]";
-            return RemoveSpaces(apartment.SelectSingleNode(apartment.XPath + numOfRoomsXPath).InnerText);
         }
 
         public int ParseHtmlNumOfRooms(HtmlNode apartment)
@@ -183,16 +170,16 @@ namespace DataAgregationService.Parsers.LunUa
 
             foreach (var pattern in pricePatterns)
             {
-                Regex priceRegEx = new Regex(pattern);
-                Match match = priceRegEx.Match(HtmlEntity.DeEntitize(apartPriceText));
+                var priceRegEx = new Regex(pattern);
+                var match = priceRegEx.Match(HtmlEntity.DeEntitize(apartPriceText));
 
-                if (match.Success)
-                {
-                    int priceMin = match.Groups[minTag].Success ? int.Parse(match.Groups[minTag].Value) : default(int);
-                    int priceMax = match.Groups[maxTag].Success ? int.Parse(match.Groups[maxTag].Value) : priceMin;
-                    Tuple<int, int> result = new Tuple<int, int>(priceMin, priceMax);
-                    return result;
-                }
+                if (!match.Success) 
+                    continue;
+                
+                var priceMin = match.Groups[minTag].Success ? int.Parse(match.Groups[minTag].Value) : default(int);
+                var priceMax = match.Groups[maxTag].Success ? int.Parse(match.Groups[maxTag].Value) : priceMin;
+                var result = new Tuple<int, int>(priceMin, priceMax);
+                return result;
             }
 
             return default;
@@ -223,6 +210,19 @@ namespace DataAgregationService.Parsers.LunUa
                 data = data.Replace(symbol, " ");
 
             return data.Trim();
+        }
+        
+        protected virtual async Task<HtmlNodeCollection> LoadHtmlNodes(string url, string xPath)
+        {
+            var web = new HtmlWeb();
+            var htmlPage = await web.LoadFromWebAsync(url);
+            return htmlPage.DocumentNode.SelectNodes(xPath);
+        }
+
+        private string LoadHtmlNumOfRoomsOrFloors(HtmlNode apartment)
+        {
+            const string numOfRoomsXPath = "/div[2]/div[1]";
+            return RemoveSpaces(apartment.SelectSingleNode(apartment.XPath + numOfRoomsXPath).InnerText);
         }
     }
 }
