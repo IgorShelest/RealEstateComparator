@@ -10,12 +10,12 @@ using HtmlAgilityPack;
 
 namespace DataAggregationService.Parsers.LunUa
 {
-    class LunUaApartmentParser : IApartmentParser
+    class LunUaAggregator : IAggregator
     {
         private readonly HtmlHandlerLunUa _htmlHandlerLunUa;
         private const string _source = "LunUa";
 
-        public LunUaApartmentParser()
+        public LunUaAggregator()
         {
             _htmlHandlerLunUa = new HtmlHandlerLunUa();
         }
@@ -67,7 +67,7 @@ namespace DataAggregationService.Parsers.LunUa
                 new CityData()
                 {
                     Name = _htmlHandlerLunUa.ParseText(node),
-                    Url = _htmlHandlerLunUa.CreateUrl(_htmlHandlerLunUa.ParseHref(node))
+                    Url = _htmlHandlerLunUa.CreateLunUaUrl(_htmlHandlerLunUa.ParseHref(node))
                 }
             );
 
@@ -85,7 +85,7 @@ namespace DataAggregationService.Parsers.LunUa
             return new ApartComplexesDataPerCity
             {
                 CityName = cityData.Name,
-                Url = _htmlHandlerLunUa.CreateUrl(_htmlHandlerLunUa.ParseHref(parsedApartComplexGroupData))
+                Url = _htmlHandlerLunUa.CreateLunUaUrl(_htmlHandlerLunUa.ParseHref(parsedApartComplexGroupData))
             };
         }
 
@@ -146,13 +146,15 @@ namespace DataAggregationService.Parsers.LunUa
 
         private ApartComplex CreateApartComplex(HtmlNode complex, string cityName)
         {
-            return new ApartComplex()
+            var temp = new ApartComplex()
             {
                 Source = _source,
                 Name = _htmlHandlerLunUa.ParseApartComplexText(complex),
                 CityName = cityName,
-                Url = _htmlHandlerLunUa.CreateUrl(_htmlHandlerLunUa.ParseApartComplexHRef(complex))
+                Url = _htmlHandlerLunUa.CreateLunUaUrl(_htmlHandlerLunUa.ParseApartComplexHRef(complex))
             };
+
+            return temp;
         }
 
         private IEnumerable<Apartment> CreateApartmentsPerApartComplex(HtmlNodeCollection htmlNodes)

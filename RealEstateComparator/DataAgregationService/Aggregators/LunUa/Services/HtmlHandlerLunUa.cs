@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using DataAggregationService.Aggregators.Common.Services;
 using HtmlAgilityPack;
 
 namespace DataAgregationService.Parsers.LunUa
 {
-    public class HtmlHandlerLunUa
+    public class HtmlHandlerLunUa: HtmlHandler
     {
         private static readonly string _homePageUrl = "https://lun.ua";
         
@@ -17,33 +18,21 @@ namespace DataAgregationService.Parsers.LunUa
             return await LoadHtmlNodes(_homePageUrl, cityXPath);
         }
 
-        public string ParseText(HtmlNode htmlNode)
+        public string CreateLunUaUrl(string hRef)
         {
-            return ReplaceHtmlHarmfulSymbols(htmlNode.InnerText.Trim());
-        }
-
-        public string ParseHref(HtmlNode htmlNode)
-        {
-            return htmlNode.Attributes["href"].Value.Trim();
-        }
-
-        public string CreateUrl(string hRef)
-        {
-            return _homePageUrl + hRef;
+            return CreateUrl(_homePageUrl, hRef);
         }
 
         public string ParseApartComplexText(HtmlNode htmlNode)
         {
             const string apartComplexNameXPath = ".//a/div[3]/div[@class='card-title']";
-            var searchedHtmlNode = htmlNode.SelectSingleNode(apartComplexNameXPath);
-            return ParseText(searchedHtmlNode);
+            return ParseTextByXPath(htmlNode, apartComplexNameXPath);
         }
 
         public string ParseApartComplexHRef(HtmlNode htmlNode)
         {
             const string apartComplexHRefXPath = ".//a";
-            var searchedHtmlNode = htmlNode.SelectSingleNode(apartComplexHRefXPath);
-            return ParseHref(searchedHtmlNode);
+            return ParseHrefByXPath(htmlNode, apartComplexHRefXPath);
         }
 
         public async Task<bool> NextPageExists(string currentPageUrl)
@@ -67,12 +56,6 @@ namespace DataAgregationService.Parsers.LunUa
             var apartComplexes = await LoadHtmlNodes(url, apartComplexGroupXPath);
 
             return apartComplexes.First();
-        }
-
-        public string CreatePageUrl(string url, int pageNumber)
-        {
-            const string pageTag = "?page=";
-            return url + pageTag + pageNumber;
         }
 
         public async Task<HtmlNodeCollection> LoadApartComplexesHtml(string url)
@@ -106,7 +89,7 @@ namespace DataAgregationService.Parsers.LunUa
             
             return match.Success ? int.Parse(match.Groups["num"].Value) : default;
         }
-
+        
         public bool HasMultipleFloors(HtmlNode apartment)
         {
             const string numOfFloorsPattern = @"^(?<num>[А-ЯІ][а-яі]+)";
@@ -114,7 +97,7 @@ namespace DataAgregationService.Parsers.LunUa
             
             var numOfFloorsText = LoadHtmlNumOfRoomsOrFloors(apartment);
             var match = numOfRoomsPattern.Match(HtmlEntity.DeEntitize(numOfFloorsText));
-
+        
             return match.Success;
         }
         
@@ -184,45 +167,11 @@ namespace DataAgregationService.Parsers.LunUa
 
             return default;
         }
-        
-        private static string RemoveSpaces(string data)
-        {
-            IEnumerable<string> spaces = new List<string>
-            {
-                " ", // non-breaking space
-                " " // space
-            };
-
-            foreach (var symbol in spaces)
-                data = data.Replace(symbol, "");
-
-            return data.Trim();
-        }
-        
-        private static string ReplaceHtmlHarmfulSymbols(string data)
-        {
-            IEnumerable<string> harmfulSymbols = new List<string>
-            {
-                "&nbsp;", // non-breaking space
-            };
-
-            foreach (var symbol in harmfulSymbols)
-                data = data.Replace(symbol, " ");
-
-            return data.Trim();
-        }
-        
-        protected virtual async Task<HtmlNodeCollection> LoadHtmlNodes(string url, string xPath)
-        {
-            var web = new HtmlWeb();
-            var htmlPage = await web.LoadFromWebAsync(url);
-            return htmlPage.DocumentNode.SelectNodes(xPath);
-        }
 
         private string LoadHtmlNumOfRoomsOrFloors(HtmlNode apartment)
         {
             const string numOfRoomsXPath = "/div[2]/div[1]";
-            return RemoveSpaces(apartment.SelectSingleNode(apartment.XPath + numOfRoomsXPath).InnerText);
+            return ParseTextByXPath(apartment, apartment.XPath + numOfRoomsXPath);
         }
     }
 }

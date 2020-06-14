@@ -12,12 +12,12 @@ using HtmlAgilityPack;
 
 namespace DataAggregationService.Parsers.DomRia
 {
-    public class DomRiaApartmentParser: IApartmentParser
+    public class DomRiaAggregator: IAggregator
     {
         private readonly HtmlHandlerDomRia _htmlHandler;
         private const string _source = "DomRia";
 
-        public DomRiaApartmentParser()
+        public DomRiaAggregator()
         {
             _htmlHandler = new HtmlHandlerDomRia();
         }
@@ -40,7 +40,7 @@ namespace DataAggregationService.Parsers.DomRia
                 new ApartComplexesDataPerCity()
                 {
                     CityName = _htmlHandler.ParseText(node),                        
-                    Url = _htmlHandler.CreateUrl(_htmlHandler.ParseHref(node))
+                    Url = _htmlHandler.CreateDomRiaUrl(_htmlHandler.ParseHref(node))
                 }
             );
 
@@ -115,7 +115,7 @@ namespace DataAggregationService.Parsers.DomRia
                 Source = _source,
                 Name = _htmlHandler.ParseApartComplexText(complex),
                 CityName = cityName,
-                Url = _htmlHandler.CreateUrl(_htmlHandler.ParseApartComplexHRef(complex))
+                Url = _htmlHandler.CreateDomRiaUrl(_htmlHandler.ParseApartComplexHRef(complex))
             };
         }
 
@@ -142,7 +142,7 @@ namespace DataAggregationService.Parsers.DomRia
         private Apartment CreateApartment(HtmlNode node, ref ApartmentTransferData transferData)
         {
             var numOfRooms = _htmlHandler.ParseHtmlNumOfRooms(node);
-            var hasMultipleFloors = HtmlHandlerDomRia.HasMultipleFloors(node);
+            var hasMultipleFloors = _htmlHandler.HasMultipleFloors(node);
             var roomSpace = HtmlHandlerDomRia.ParseHtmlRoomSpace(node, ref transferData);
             var price = _htmlHandler.ParseHtmlApartPrice(node, ref transferData);
 

@@ -11,10 +11,10 @@ namespace DataAggregationService
     public class DataAggregator
     {
         private readonly IApartComplexRepository _apartComplexRepository;
-        private IEnumerable<IApartmentParser> _parsers;
+        private IEnumerable<IAggregator> _parsers;
         private IEnumerable<ApartComplex> _apartComplexes;
 
-        public DataAggregator(IApartComplexRepository apartComplexRepository, IEnumerable<IApartmentParser> parsers)
+        public DataAggregator(IApartComplexRepository apartComplexRepository, IEnumerable<IAggregator> parsers)
         {
             _apartComplexRepository = apartComplexRepository;
             _parsers = parsers;

@@ -71,7 +71,7 @@ namespace DataAggregationService.Tests
             const string expectedResult = homePageUrl + hRef;
             
             // Act
-            var actualResult = htmlHandler.CreateUrl(hRef);
+            var actualResult = htmlHandler.CreateLunUaUrl(hRef);
 
             // Assert
             Assert.Equal(expectedResult, actualResult);

@@ -26,8 +26,8 @@ namespace DataAggregationService
             serviceCollection.AddScoped<DataAggregator>();
             serviceCollection.AddScoped<IApplicationContext>(service => new SQLServerContext(service.GetRequiredService<IConfigHandler>().GetConnectionString("DefaultConnection")));
             serviceCollection.AddScoped<IApartComplexRepository>(service => new ApartComplexRepository(service.GetRequiredService<IApplicationContext>()));
-            serviceCollection.AddScoped<IApartmentParser, LunUaApartmentParser>();
-            serviceCollection.AddScoped<IApartmentParser, DomRiaApartmentParser>();
+            serviceCollection.AddScoped<IAggregator, LunUaAggregator>();
+            // serviceCollection.AddScoped<IAggregator, DomRiaAggregator>();
             
             return serviceCollection;
         }

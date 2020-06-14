@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using DataAggregationService.Aggregators.Common.Services;
 using DataAggregationService.Parsers.DomRia.Data;
 using HtmlAgilityPack;
 
 namespace DataAggregationService.Parsers.DomRia.Services
 {
-    public class HtmlHandlerDomRia
+    public class HtmlHandlerDomRia: HtmlHandler
     {
         private static readonly string _homePageUrl = "https://dom.ria.com";
         
@@ -18,20 +19,9 @@ namespace DataAggregationService.Parsers.DomRia.Services
             return  await LoadHtmlNodes(_homePageUrl, cityXPath);
         }
 
-        public string CreateUrl(string hRef)
+        public string CreateDomRiaUrl(string hRef)
         {
-            return _homePageUrl + hRef;
-        }
-
-        public string ParseHref(HtmlNode htmlNode)
-        {
-            return htmlNode.Attributes["href"].Value.Trim();
-        }
-
-        public string CreatePageUrl(string url, int pageNumber)
-        {
-            const string pageTag = "?page=";
-            return url + pageTag + pageNumber;
+            return CreateUrl(_homePageUrl, hRef);
         }
 
         public async Task<HtmlNodeCollection> LoadApartComplexesHtml(string url)
@@ -44,15 +34,13 @@ namespace DataAggregationService.Parsers.DomRia.Services
         public string ParseApartComplexText(HtmlNode htmlNode)
         {
             const string apartComplexNameXPath = ".//div/div/h2/a";
-            var searchedHtmlNode = htmlNode.SelectSingleNode(apartComplexNameXPath);
-            return ParseText(searchedHtmlNode);
+            return ParseTextByXPath(htmlNode, apartComplexNameXPath);
         }
 
         public string ParseApartComplexHRef(HtmlNode htmlNode)
         {
             const string apartComplexHRefXPath = ".//div/div/h2/a";
-            var searchedHtmlNode = htmlNode.SelectSingleNode(apartComplexHRefXPath);
-            return ParseHref(searchedHtmlNode);
+            return ParseHrefByXPath(htmlNode, apartComplexHRefXPath);
         }
 
         public async Task<bool> NextPageExists(string currentPageUrl)
@@ -69,11 +57,6 @@ namespace DataAggregationService.Parsers.DomRia.Services
             var nextPageExists = !activePageNode.Equals(lastPageNode);
 
             return nextPageExists;
-        }
-        
-        public string ParseText(HtmlNode htmlNode)
-        {
-            return ReplaceHtmlHarmfulSymbols(htmlNode.InnerText.Trim());
         }
 
         public async Task<HtmlNodeCollection> LoadApartmentsHtml(string url)
@@ -97,14 +80,14 @@ namespace DataAggregationService.Parsers.DomRia.Services
             return match.Success ? int.Parse(match.Groups["num"].Value) : default;
         }
 
-        public static bool HasMultipleFloors(HtmlNode apartment)
+        public bool HasMultipleFloors(HtmlNode apartment)
         {
             const string numOfFloorsPattern = @"^(?<num>[А-ЯІ][а-яі]+)";
             var numOfRoomsPattern = new Regex(numOfFloorsPattern);
             
             var numOfFloorsText = LoadHtmlNumOfRoomsOrFloors(apartment);
             var match = numOfRoomsPattern.Match(HtmlEntity.DeEntitize(numOfFloorsText));
-
+        
             return match.Success;
         }
         
@@ -134,45 +117,10 @@ namespace DataAggregationService.Parsers.DomRia.Services
             return new Tuple<int, int>(minPrice, maxPrice);
         }
 
-        private static string LoadHtmlNumOfRoomsOrFloors(HtmlNode apartment)
+        private string LoadHtmlNumOfRoomsOrFloors(HtmlNode apartment)
         {
             const string numOfRoomsXPath = ".//a";
-            return RemoveSpaces(apartment.SelectSingleNode(numOfRoomsXPath).InnerText);
-        }
-
-        private static string RemoveSpaces(string data)
-        {
-            IEnumerable<string> spaces = new List<string>
-            {
-                " ", // non-breaking space
-                " " // space
-            };
-
-            foreach (var symbol in spaces)
-                data = data.Replace(symbol, "");
-
-            return data.Trim();
-        }
-        
-        private async Task<HtmlNodeCollection> LoadHtmlNodes(string url, string xPath)
-        {
-            var web = new HtmlWeb();
-            var htmlPage = await web.LoadFromWebAsync(url);
-            return htmlPage.DocumentNode.SelectNodes(xPath);
-        }
-        
-        private static string ReplaceHtmlHarmfulSymbols(string data)
-        {
-            var harmfulSymbols = new Dictionary<string, string>
-            {
-                {"&nbsp;", " "}, // non-breaking space
-                {"&#x27;", "'"}
-            };
-
-            foreach (var symbol in harmfulSymbols)
-                data = data.Replace(symbol.Key, symbol.Value);
-
-            return data.Trim();
+            return ParseTextByXPath(apartment, numOfRoomsXPath);
         }
     }
 }

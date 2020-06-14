@@ -13,3 +13,5 @@ RealEstateComparator/ApplicationContextRepositories/obj
 RealEstateComparator/IRealEstateComparator/obj
 RealEstateComparator/ApplicationContexts/bin
 RealEstateComparator/ApplicationContexts/obj
+RealEstateComparator/DataAggregationService.Tests/bin
+RealEstateComparator/DataAggregationService.Tests/obj
