@@ -13,14 +13,12 @@ namespace DataAggregationService.Parsers.DomRia.Services
     {
         private readonly PageHandler _pageHandler;
         private readonly HtmlParser _htmlParser;
-        private readonly ApartmentHandler _apartmentHandler;
         private const string _source = "DomRia";
 
         public ApartComplexHandler()
         {
             _pageHandler = new PageHandler();
             _htmlParser = new HtmlParser();
-            _apartmentHandler = new ApartmentHandler();
         }
         
         public async Task<IEnumerable<ApartComplex>> GetApartComplexes()
@@ -92,10 +90,7 @@ namespace DataAggregationService.Parsers.DomRia.Services
             try
             {
                 var apartComplexesHtml =  await _pageHandler.LoadApartComplexesHtml(currentPageUrl);
-                var apartComplexes = apartComplexesHtml.Select(complex => CreateApartComplex(complex, cityName)).ToList();
-
-                foreach (var complex in apartComplexes)
-                    complex.Apartments = await _apartmentHandler.GetApartmentsPerApartComplex(complex.Url);
+                var apartComplexes = apartComplexesHtml.Select(complex => CreateApartComplex(complex, cityName));
                 
                 return apartComplexes;
             }

@@ -17,7 +17,13 @@ namespace DataAggregationService.Parsers.DomRia.Services
             _pageHandler = new PageHandler();
         }
 
-        public async Task<IEnumerable<Apartment>> GetApartmentsPerApartComplex(string url)
+        public async Task SetApartments(IEnumerable<ApartComplex> apartComplexes)
+        {
+            foreach (var complex in apartComplexes)
+                complex.Apartments = await GetApartmentsPerApartComplex(complex.Url);
+        }
+
+        private async Task<IEnumerable<Apartment>> GetApartmentsPerApartComplex(string url)
         {
             try
             {

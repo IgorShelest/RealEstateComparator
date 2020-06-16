@@ -9,15 +9,20 @@ namespace DataAggregationService.Parsers.DomRia
     public class DomRiaAggregator: IAggregator
     {
         private readonly ApartComplexHandler _apartComplexHandler;
+        private readonly ApartmentHandler _apartmentHandler;
 
         public DomRiaAggregator()
         {
             _apartComplexHandler = new ApartComplexHandler();
+            _apartmentHandler = new ApartmentHandler();
         }
 
-        public async Task<IEnumerable<ApartComplex>> GetApartmentData()
+        public async Task<IEnumerable<ApartComplex>> AggregateData()
         {
-            return await _apartComplexHandler.GetApartComplexes();
+            var apartComplexes = await _apartComplexHandler.GetApartComplexes();
+            await _apartmentHandler.SetApartments(apartComplexes);
+
+            return apartComplexes;
         }
     }
 }

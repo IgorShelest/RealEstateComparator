@@ -10,17 +10,21 @@ namespace DataAggregationService.Parsers.LunUa
     {
         private readonly CityHandler _cityHandler;
         private readonly ApartComplexHandler _apartComplexHandler;
+        private readonly ApartmentHandler _apartmentHandler;
 
         public LunUaAggregator()
         {
             _cityHandler = new CityHandler();
             _apartComplexHandler = new ApartComplexHandler();
+            _apartmentHandler = new ApartmentHandler();
         }
 
-        public async Task<IEnumerable<ApartComplex>> GetApartmentData()
+        public async Task<IEnumerable<ApartComplex>> AggregateData()
         {
             var citiesData = await _cityHandler.GetCityData();
             var apartComplexes = await _apartComplexHandler.GetApartComplexes(citiesData);
+            await _apartmentHandler.SetApartments(apartComplexes);
+            
             return apartComplexes;
         }
     }

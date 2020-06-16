@@ -12,7 +12,6 @@ namespace DataAgregationService.Parsers.LunUa
     public class ApartComplexHandler
     {
         private readonly PageHandler _pageHandler;
-        private readonly ApartmentHandler _apartmentHandler;
         private readonly HtmlParser _htmlParser;
 
         private const string _source = "LunUa";
@@ -20,7 +19,6 @@ namespace DataAgregationService.Parsers.LunUa
         public ApartComplexHandler()
         {
             _pageHandler = new PageHandler();
-            _apartmentHandler = new ApartmentHandler();
             _htmlParser = new HtmlParser();
         }
         
@@ -70,7 +68,7 @@ namespace DataAgregationService.Parsers.LunUa
                 currentPageUrl = _pageHandler.CreatePageUrl(apartComplexesDataPerCity.Url, pageNumber++);
                 apartComplexesPerPage.AddRange(await GetApartComplexesPerPage(currentPageUrl, apartComplexesDataPerCity.CityName));
             }
-            while /*(false); // */(await _pageHandler.NextPageExists(currentPageUrl));
+            while (false); // */(await _pageHandler.NextPageExists(currentPageUrl));
 
             return apartComplexesPerPage;
         }
@@ -81,11 +79,7 @@ namespace DataAgregationService.Parsers.LunUa
             {
                 var apartComplexesHtml = await _pageHandler.LoadApartComplexesHtml(currentPageUrl);
                 var apartComplexes = apartComplexesHtml
-                    .Select(complex => CreateApartComplex(complex, cityName))
-                    .ToList();
-
-                foreach (var complex in apartComplexes)
-                    complex.Apartments = await _apartmentHandler.GetApartmentsPerApartComplex(complex.Url);
+                    .Select(complex => CreateApartComplex(complex, cityName));
 
                 return apartComplexes;
             }

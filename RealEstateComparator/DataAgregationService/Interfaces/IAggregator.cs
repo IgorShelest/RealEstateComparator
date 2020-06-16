@@ -6,6 +6,6 @@ namespace DataAggregationService.Interfaces
 {
     public interface IAggregator
     {
-        Task<IEnumerable<ApartComplex>> GetApartmentData();
+        Task<IEnumerable<ApartComplex>> AggregateData();
     }
 }

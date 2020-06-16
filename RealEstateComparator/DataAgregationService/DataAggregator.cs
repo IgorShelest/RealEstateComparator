@@ -30,7 +30,7 @@ namespace DataAggregationService
 
         private async Task GetData()
         {
-            var getDataTasks = _parsers.Select(parser => parser.GetApartmentData());
+            var getDataTasks = _parsers.Select(parser => parser.AggregateData());
             var getDataResults = await Task.WhenAll(getDataTasks);
             
             var apartComplexes = new List<ApartComplex>();
