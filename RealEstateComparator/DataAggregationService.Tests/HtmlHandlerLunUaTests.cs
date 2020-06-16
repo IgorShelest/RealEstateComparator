@@ -21,7 +21,7 @@ namespace DataAggregationService.Tests
         public async Task LoadCityHtml_ReturnNodes()
         {
             // Arrange
-            var htmlHandler = new HtmlHandlerLunUa();
+            var htmlHandler = new PageHandler();
             
             // Act
             var actualResult = await htmlHandler.LoadCityHtml();
@@ -37,7 +37,7 @@ namespace DataAggregationService.Tests
             // Arrange
             var htmlNode = HtmlNode.CreateNode(_htmlSomeNodeLiteral);
             const string expectedResult = "Київ";
-            var htmlHandler = new HtmlHandlerLunUa();
+            var htmlHandler = new PageHandler();
             
             // Act
             var actualResult = htmlHandler.ParseText(htmlNode);
@@ -52,7 +52,7 @@ namespace DataAggregationService.Tests
             // Arrange
             var htmlNode = HtmlNode.CreateNode(_htmlSomeNodeLiteral);
             const string expectedResult = "/?q=kyiv";
-            var htmlHandler = new HtmlHandlerLunUa();
+            var htmlHandler = new PageHandler();
             
             // Act
             var actualResult = htmlHandler.ParseHref(htmlNode);
@@ -66,7 +66,7 @@ namespace DataAggregationService.Tests
         {
             // Arrange
             const string homePageUrl = "https://lun.ua";
-            var htmlHandler = new HtmlHandlerLunUa();
+            var htmlHandler = new PageHandler();
             const string hRef = "/uk/жк-oasis-київ";
             const string expectedResult = homePageUrl + hRef;
             
@@ -82,7 +82,7 @@ namespace DataAggregationService.Tests
         {
             // Arrange
             var htmlNode = HtmlNode.CreateNode(_htmlApartComplexLiteral);
-            var htmlHandler = new HtmlHandlerLunUa();
+            var htmlHandler = new PageHandler();
             const string expectedResult = "ЖК Manhattan";
             
             // Act
@@ -97,7 +97,7 @@ namespace DataAggregationService.Tests
         {
             // Arrange
             var htmlNode = HtmlNode.CreateNode(_htmlApartComplexLiteral);
-            var htmlHandler = new HtmlHandlerLunUa();
+            var htmlHandler = new PageHandler();
             const string expectedResult = "/uk/жк-manhattan-одеса";
             
             // Act
@@ -117,7 +117,7 @@ namespace DataAggregationService.Tests
                 HtmlNode.CreateNode(_htmlPageInactiveNodeLiteral)
             });
             
-            var htmlHandler = new Mock<HtmlHandlerLunUa>();
+            var htmlHandler = new Mock<PageHandler>();
             htmlHandler
                 .Protected()
                 .Setup<Task<HtmlNodeCollection>>("LoadHtmlNodes", new [] {ItExpr.IsAny<string>(), ItExpr.IsAny<string>()})
@@ -142,7 +142,7 @@ namespace DataAggregationService.Tests
                 HtmlNode.CreateNode(_htmlPageActiveNodeLiteral)
             });
             
-            var htmlHandler = new Mock<HtmlHandlerLunUa>();
+            var htmlHandler = new Mock<PageHandler>();
             htmlHandler
                 .Protected()
                 .Setup<Task<HtmlNodeCollection>>("LoadHtmlNodes", new [] {ItExpr.IsAny<string>(), ItExpr.IsAny<string>()})
@@ -167,7 +167,7 @@ namespace DataAggregationService.Tests
             {
                 apartComplexHtmlNode
             });    
-            var htmlHandler = new Mock<HtmlHandlerLunUa>();
+            var htmlHandler = new Mock<PageHandler>();
             htmlHandler
                 .Protected()
                 .Setup<Task<HtmlNodeCollection>>("LoadHtmlNodes", new [] {ItExpr.IsAny<string>(), ItExpr.IsAny<string>()})
@@ -186,7 +186,7 @@ namespace DataAggregationService.Tests
         public void CreatePageUrl()
         {
             // Arrange
-            var htmlHandler = new HtmlHandlerLunUa();
+            var htmlHandler = new PageHandler();
             const string url = "https://some.url.com";
             const string pageTag = "?page=";
             const int pageNumber = 7;
@@ -205,7 +205,7 @@ namespace DataAggregationService.Tests
             // Arrange
             const string apartmentHtmlNodeLiteral = "<a href=\"/uk/жк-manhattan-одеса/планування/однокімнатні\" class=\"BuildingPrices-row\" data-analytics-click=\"view_building_about|prices|goto_layout_view\"><div class=\"BuildingPrices-cell -img\"><img class=\"BuildingPrices-image lazyload\" data-src=\"//img.lunstatic.net/layout-56x56/145520.png\" data-srcset=\"//img.lunstatic.net/layout-112x112/145520.png 2x\" alt=\"ЖК Manhattan: планування 1-кімнатної квартири 29.71 м2, тип 1Г\"></div><div class=\"BuildingPrices-subrow\"><div class=\"BuildingPrices-cell\">1-кімнатні</div><div class=\"BuildingPrices-cell\">ід                <span data-currency=\"uah\" class=\"\">561 тис. грн</span><span data-currency=\"usd\" class=\"hidden\">21 070 $</span></div></div><div class=\"BuildingPrices-subrow \"><div class=\"BuildingPrices-cell\">0...77 м²                                    </div><div class=\"BuildingPrices-cell -sqm\"><div data-currency=\"uah\" class=\"\">8 250 — 31 950 грн/м²                </div><div data-currency=\"usd\" class=\"hidden\">90 — 1 200 $/м²                </div></div></div></a>";
             var apartmentNode = HtmlNode.CreateNode(apartmentHtmlNodeLiteral);
-            var htmlHandler = new HtmlHandlerLunUa();
+            var htmlHandler = new PageHandler();
             const int expectedResult = 1;
             
             // Act
@@ -222,7 +222,7 @@ namespace DataAggregationService.Tests
         {
             // Arrange
             var apartmentNode = HtmlNode.CreateNode(apartmentHtmlNodeLiteral);
-            var htmlHandler = new HtmlHandlerLunUa();
+            var htmlHandler = new PageHandler();
             
             // Act
             var actualResult = htmlHandler.HasMultipleFloors(apartmentNode);
@@ -238,7 +238,7 @@ namespace DataAggregationService.Tests
             const string apartmentHtmlNodeLiteral = "<a href=\"/uk/жк-ріел-сіті-львів/планування/однокімнатні\" class=\"BuildingPrices-row\" data-analytics-click=\"view_building_about|prices|goto_layout_view\"><div class=\"BuildingPrices-cell -img\"><img class=\"BuildingPrices-image lazyload\" data-src=\"//img.lunstatic.net/vector-layout/35198-0.svg\" alt=\"ЖК Ріел Сіті: планування 1-кімнатної квартири 23.54 м2, тип 1-23.54\"></div><div class=\"BuildingPrices-subrow\"><div class=\"BuildingPrices-cell\">1-кімнатні</div><div class=\"BuildingPrices-cell\">ід                <span data-currency=\"uah\" class=\"\">363 тис. грн</span><span data-currency=\"usd\" class=\"hidden\">13 620 $</span></div></div><div class=\"BuildingPrices-subrow \"><div class=\"BuildingPrices-cell\">24...67 м²                                    </div><div class=\"BuildingPrices-cell -sqm\"><div data-currency=\"uah\" class=\"\">4 500 — 18 800 грн/м²                </div><div data-currency=\"usd\" class=\"hidden\">40 — 710 $/м²                </div></div></div></a>";
             var expectedResult = new Tuple<int, int>(24, 67);
             var apartmentNode = HtmlNode.CreateNode(apartmentHtmlNodeLiteral);
-            var htmlHandler = new HtmlHandlerLunUa();
+            var htmlHandler = new PageHandler();
             
             // Act
             var actualResult = htmlHandler.ParseHtmlRoomSpace(apartmentNode);
@@ -254,7 +254,7 @@ namespace DataAggregationService.Tests
             const string apartmentHtmlNodeLiteral = "<a href=\"/uk/жк-ріел-сіті-львів/планування/однокімнатні\" class=\"BuildingPrices-row\" data-analytics-click=\"view_building_about|prices|goto_layout_view\"><div class=\"BuildingPrices-cell -img\"><img class=\"BuildingPrices-image lazyload\" data-src=\"//img.lunstatic.net/vector-layout/35198-0.svg\" alt=\"ЖК Ріел Сіті: планування 1-кімнатної квартири 23.54 м2, тип 1-23.54\"></div><div class=\"BuildingPrices-subrow\"><div class=\"BuildingPrices-cell\">1-кімнатні</div><div class=\"BuildingPrices-cell\">ід                <span data-currency=\"uah\" class=\"\">363 тис. грн</span><span data-currency=\"usd\" class=\"hidden\">13 620 $</span></div></div><div class=\"BuildingPrices-subrow \"><div class=\"BuildingPrices-cell\">24...67 м²                                    </div><div class=\"BuildingPrices-cell -sqm\"><div data-currency=\"uah\" class=\"\">14 500 — 18 800 грн/м²                </div><div data-currency=\"usd\" class=\"hidden\">40 — 710 $/м²                </div></div></div></a>";
             var expectedResult = new Tuple<int, int>(14500, 18800);
             var apartmentNode = HtmlNode.CreateNode(apartmentHtmlNodeLiteral);
-            var htmlHandler = new HtmlHandlerLunUa();
+            var htmlHandler = new PageHandler();
             
             // Act
             var actualResult = htmlHandler.ParseHtmlApartPrice(apartmentNode);
@@ -269,7 +269,7 @@ namespace DataAggregationService.Tests
         public void RemoveSpaces(string dataWithSpaces, string expectedResult)
         {
             // Arrange
-            var type = typeof(HtmlHandlerLunUa);
+            var type = typeof(PageHandler);
             var htmlHandler = Activator.CreateInstance(type);
             var method = type
                 .GetMethods(BindingFlags.Static | BindingFlags.NonPublic)
@@ -288,7 +288,7 @@ namespace DataAggregationService.Tests
         public void ReplaceHtmlHarmfulSymbols(string dataWithHarmfulSymbols, string expectedResult)
         {
             // Arrange
-            var type = typeof(HtmlHandlerLunUa);
+            var type = typeof(PageHandler);
             var htmlHandler = Activator.CreateInstance(type);
             var method = type
                 .GetMethods(BindingFlags.Static | BindingFlags.NonPublic)
@@ -309,7 +309,7 @@ namespace DataAggregationService.Tests
             var apartmentNode = HtmlNode.CreateNode(apartmentHtmlNodeLiteral);
             const string expectedResult = "1-кімнатні";
             
-            var type = typeof(HtmlHandlerLunUa);
+            var type = typeof(PageHandler);
             var htmlHandler = Activator.CreateInstance(type);
             var method = type
                 .GetMethods(BindingFlags.NonPublic | BindingFlags.Instance)

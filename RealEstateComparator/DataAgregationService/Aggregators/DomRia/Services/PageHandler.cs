@@ -9,44 +9,56 @@ using HtmlAgilityPack;
 
 namespace DataAggregationService.Parsers.DomRia.Services
 {
-    public class HtmlHandlerDomRia: HtmlHandler
+    public class PageHandler
     {
+        private readonly HtmlParser _htmlParser;
         private static readonly string _homePageUrl = "https://dom.ria.com";
+        
+        public PageHandler()
+        {
+            _htmlParser = new HtmlParser();    
+        }
         
         public  async Task<HtmlNodeCollection> LoadApartComplexDataHtml()
         {
             const string cityXPath = "//*[@id='app']/div[3]/div/div[3]/div[6]/ul[17]/li[*]/a";
-            return  await LoadHtmlNodes(_homePageUrl, cityXPath);
+            return  await _htmlParser.LoadHtmlNodes(_homePageUrl, cityXPath);
         }
 
         public string CreateDomRiaUrl(string hRef)
         {
-            return CreateUrl(_homePageUrl, hRef);
+            return _htmlParser.CreateUrl(_homePageUrl, hRef);
+        }
+        
+        public string CreatePageUrl(string url, int pageNumber)
+        {
+            const string pageTag = "?page=";
+            return url + pageTag + pageNumber;
         }
 
         public async Task<HtmlNodeCollection> LoadApartComplexesHtml(string url)
         {
             const string apartComplexXPath = "//*[@id='newbuilds']/section[*]";//"/div/div/h2/a";
-            var apartComplexesForPage = await LoadHtmlNodes(url, apartComplexXPath);
+            var apartComplexesForPage = await _htmlParser.LoadHtmlNodes(url, apartComplexXPath);
             return apartComplexesForPage;
         }
 
         public string ParseApartComplexText(HtmlNode htmlNode)
         {
             const string apartComplexNameXPath = ".//div/div/h2/a";
-            return ParseTextByXPath(htmlNode, apartComplexNameXPath);
+            return _htmlParser.ParseTextByXPath(htmlNode, apartComplexNameXPath);
         }
 
         public string ParseApartComplexHRef(HtmlNode htmlNode)
         {
             const string apartComplexHRefXPath = ".//div/div/h2/a";
-            return ParseHrefByXPath(htmlNode, apartComplexHRefXPath);
+            return _htmlParser.ParseHrefByXPath(htmlNode, apartComplexHRefXPath);
         }
 
         public async Task<bool> NextPageExists(string currentPageUrl)
         {
             const string pageNumberXPath = "//*[@id='pagination']/div/div[1]/div/span[*]";
-            var allPageNodes = await LoadHtmlNodes(currentPageUrl, pageNumberXPath);
+            var allPageNodes = await _htmlParser.LoadHtmlNodes(currentPageUrl, pageNumberXPath);
             if (allPageNodes == null)
                 return false;
             
@@ -62,7 +74,7 @@ namespace DataAggregationService.Parsers.DomRia.Services
         public async Task<HtmlNodeCollection> LoadApartmentsHtml(string url)
         {
             const string apartmentXPath = "//*[@id='pricesBlock']/section/div[3]/table/tbody/tr[*]";
-            var apartmentNodes = await LoadHtmlNodes(url, apartmentXPath);
+            var apartmentNodes = await _htmlParser.LoadHtmlNodes(url, apartmentXPath);
             
             const int tableHeaderPosition = 0;
             apartmentNodes?.RemoveAt(tableHeaderPosition);
@@ -107,7 +119,7 @@ namespace DataAggregationService.Parsers.DomRia.Services
         public Tuple<int, int> ParseHtmlApartPrice(HtmlNode apartment, ref ApartmentTransferData transferData)
         {
             const string priceXPath = ".//td[3]/span/span/b";
-            var thisApartmentPriceText = RemoveSpaces(apartment.SelectSingleNode(priceXPath).InnerText);
+            var thisApartmentPriceText = _htmlParser.RemoveSpaces(apartment.SelectSingleNode(priceXPath).InnerText);
             
             var minPrice = int.Parse(thisApartmentPriceText);
             var maxPrice = transferData.PreviousPrice == 0 ? minPrice : transferData.PreviousPrice;
@@ -120,7 +132,7 @@ namespace DataAggregationService.Parsers.DomRia.Services
         private string LoadHtmlNumOfRoomsOrFloors(HtmlNode apartment)
         {
             const string numOfRoomsXPath = ".//a";
-            return ParseTextByXPath(apartment, numOfRoomsXPath);
+            return _htmlParser.ParseTextByXPath(apartment, numOfRoomsXPath);
         }
     }
 }

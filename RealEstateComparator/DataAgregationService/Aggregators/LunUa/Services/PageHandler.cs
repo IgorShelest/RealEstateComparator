@@ -8,37 +8,49 @@ using HtmlAgilityPack;
 
 namespace DataAgregationService.Parsers.LunUa
 {
-    public class HtmlHandlerLunUa: HtmlHandler
+    public class PageHandler
     {
+        private readonly HtmlParser _htmlParser;
         private static readonly string _homePageUrl = "https://lun.ua";
+
+        public PageHandler()
+        {
+            _htmlParser = new HtmlParser();
+        }
+        
+        public string CreateLunUaUrl(string hRef)
+        {
+            return _htmlParser.CreateUrl(_homePageUrl, hRef);
+        }
+        
+        public string CreatePageUrl(string url, int pageNumber)
+        {
+            const string pageTag = "?page=";
+            return url + pageTag + pageNumber;
+        }
         
         public async Task<HtmlNodeCollection> LoadCityHtml()
         {
             const string cityXPath = "//*[@id='geo-control']/div[3]/div[2]/div/div[4]/a[*]";
-            return await LoadHtmlNodes(_homePageUrl, cityXPath);
-        }
-
-        public string CreateLunUaUrl(string hRef)
-        {
-            return CreateUrl(_homePageUrl, hRef);
+            return await _htmlParser.LoadHtmlNodes(_homePageUrl, cityXPath);
         }
 
         public string ParseApartComplexText(HtmlNode htmlNode)
         {
             const string apartComplexNameXPath = ".//a/div[3]/div[@class='card-title']";
-            return ParseTextByXPath(htmlNode, apartComplexNameXPath);
+            return _htmlParser.ParseTextByXPath(htmlNode, apartComplexNameXPath);
         }
 
         public string ParseApartComplexHRef(HtmlNode htmlNode)
         {
             const string apartComplexHRefXPath = ".//a";
-            return ParseHrefByXPath(htmlNode, apartComplexHRefXPath);
+            return _htmlParser.ParseHrefByXPath(htmlNode, apartComplexHRefXPath);
         }
 
         public async Task<bool> NextPageExists(string currentPageUrl)
         {
             const string pageNumberXPath = "//*[@id='search-results']/div[4]/div/button[@data-analytics-click='catalog|pagination|page_click']";
-            var htmlNodes = await LoadHtmlNodes(currentPageUrl, pageNumberXPath);
+            var htmlNodes = await _htmlParser.LoadHtmlNodes(currentPageUrl, pageNumberXPath);
             if (htmlNodes == null)
                 return false;
 
@@ -53,7 +65,7 @@ namespace DataAgregationService.Parsers.LunUa
         public async Task<HtmlNode> LoadApartComplexDataHtml(string url)
         {
             const string apartComplexGroupXPath = "/html/body/div[3]/div[2]/div[2]/a[1]";
-            var apartComplexes = await LoadHtmlNodes(url, apartComplexGroupXPath);
+            var apartComplexes = await _htmlParser.LoadHtmlNodes(url, apartComplexGroupXPath);
 
             return apartComplexes.First();
         }
@@ -61,7 +73,7 @@ namespace DataAgregationService.Parsers.LunUa
         public async Task<HtmlNodeCollection> LoadApartComplexesHtml(string url)
         {
             const string apartComplexXPath = "//*[@id='search-results']/div[3]/div[*]/div";
-            var apartComplexesForPage = await LoadHtmlNodes(url, apartComplexXPath);
+            var apartComplexesForPage = await _htmlParser.LoadHtmlNodes(url, apartComplexXPath);
             return apartComplexesForPage;
         }
 
@@ -70,7 +82,7 @@ namespace DataAgregationService.Parsers.LunUa
             try
             {
                 const string apartmentXPath = "//*[@id='prices']/div[4]/div[@class='BuildingPrices-table']/a[@class='BuildingPrices-row']";
-                return await LoadHtmlNodes(url, apartmentXPath);
+                return await _htmlParser.LoadHtmlNodes(url, apartmentXPath);
             }
             catch (Exception e)
             {
@@ -113,7 +125,7 @@ namespace DataAgregationService.Parsers.LunUa
                 String.Format(@"(?<{0}>\d+)м²", minTag)
             };
 
-            var roomSpaceText = RemoveSpaces(apartment.SelectSingleNode(apartment.XPath + roomSpaceXPath).InnerText);
+            var roomSpaceText = _htmlParser.RemoveSpaces(apartment.SelectSingleNode(apartment.XPath + roomSpaceXPath).InnerText);
 
             foreach (var pattern in roomSpacePatterns)
             {
@@ -149,7 +161,7 @@ namespace DataAgregationService.Parsers.LunUa
             };
 
             var apartPriceText =
-                RemoveSpaces(apartment.SelectSingleNode(apartment.XPath + priceXPath).InnerText.Trim());
+                _htmlParser.RemoveSpaces(apartment.SelectSingleNode(apartment.XPath + priceXPath).InnerText.Trim());
 
             foreach (var pattern in pricePatterns)
             {
@@ -171,7 +183,7 @@ namespace DataAgregationService.Parsers.LunUa
         private string LoadHtmlNumOfRoomsOrFloors(HtmlNode apartment)
         {
             const string numOfRoomsXPath = "/div[2]/div[1]";
-            return ParseTextByXPath(apartment, apartment.XPath + numOfRoomsXPath);
+            return _htmlParser.ParseTextByXPath(apartment, apartment.XPath + numOfRoomsXPath);
         }
     }
 }

@@ -5,9 +5,9 @@ using HtmlAgilityPack;
 
 namespace DataAggregationService.Aggregators.Common.Services
 {
-    public class HtmlHandler
+    public class HtmlParser
     {
-        protected virtual async Task<HtmlNodeCollection> LoadHtmlNodes(string url, string xPath)
+        public virtual async Task<HtmlNodeCollection> LoadHtmlNodes(string url, string xPath)
         {
             var web = new HtmlWeb();
             var htmlPage = await web.LoadFromWebAsync(url);
@@ -37,31 +37,25 @@ namespace DataAggregationService.Aggregators.Common.Services
         {
             return htmlNode.Attributes["href"].Value.Trim();
         }
-        
-        protected virtual string CreateUrl(string url, string hRef)
+
+        public virtual string CreateUrl(string url, string hRef)
         {
             return url + hRef;
         }
-        
-        protected virtual string ParseHrefByXPath(HtmlNode htmlNode, string xPath)
+
+        public virtual string ParseHrefByXPath(HtmlNode htmlNode, string xPath)
         {
             var searchedHtmlNode = htmlNode.SelectSingleNode(xPath);
             return ParseHref(searchedHtmlNode);
         }
-        
-        protected virtual string ParseTextByXPath(HtmlNode htmlNode, string xPath)
+
+        public virtual string ParseTextByXPath(HtmlNode htmlNode, string xPath)
         {
             var searchedHtmlNode = htmlNode.SelectSingleNode(xPath);
             return ParseText(searchedHtmlNode);
         }
-        
-        public string CreatePageUrl(string url, int pageNumber)
-        {
-            const string pageTag = "?page=";
-            return url + pageTag + pageNumber;
-        }
-        
-        protected virtual string RemoveSpaces(string data)
+
+        public virtual string RemoveSpaces(string data)
         {
             IEnumerable<string> spaces = new List<string>
             {
