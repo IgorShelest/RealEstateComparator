@@ -7,33 +7,27 @@ namespace DataAggregationService.Aggregators.Common.Services
 {
     public class HtmlParser
     {
-        public virtual async Task<HtmlNodeCollection> LoadHtmlNodes(string url, string xPath)
-        {
-            var web = new HtmlWeb();
-            var htmlPage = await web.LoadFromWebAsync(url);
-            return htmlPage.DocumentNode.SelectNodes(xPath);
-        }  
+        private readonly HtmlWeb _htmlWeb;
         
-        protected virtual string ReplaceHtmlHarmfulSymbols(string data)
+        public HtmlParser(HtmlWeb htmlWeb)
         {
-            var harmfulSymbols = new Dictionary<string, string>
-            {
-                {"&nbsp;", " "}, // non-breaking space
-                {"&#x27;", "'"}
-            };
-
-            foreach (var symbol in harmfulSymbols)
-                data = data.Replace(symbol.Key, symbol.Value);
-
-            return data.Trim();
+            _htmlWeb = htmlWeb;
         }
         
-        public string ParseText(HtmlNode htmlNode)
+        public virtual async Task<HtmlNodeCollection> LoadHtmlNodes(string url, string xPath)
+        {
+            var htmlPage = await _htmlWeb.LoadFromWebAsync(url);
+            var htmlNodes = htmlPage.DocumentNode.SelectNodes(xPath);
+            
+            return htmlNodes;
+        }  
+        
+        public virtual string ParseText(HtmlNode htmlNode)
         {
             return ReplaceHtmlHarmfulSymbols(htmlNode.InnerText.Trim());
         }
         
-        public string ParseHref(HtmlNode htmlNode)
+        public virtual string ParseHref(HtmlNode htmlNode)
         {
             return htmlNode.Attributes["href"].Value.Trim();
         }
@@ -46,13 +40,17 @@ namespace DataAggregationService.Aggregators.Common.Services
         public virtual string ParseHrefByXPath(HtmlNode htmlNode, string xPath)
         {
             var searchedHtmlNode = htmlNode.SelectSingleNode(xPath);
-            return ParseHref(searchedHtmlNode);
+            var hRef = ParseHref(searchedHtmlNode);
+
+            return hRef;
         }
 
         public virtual string ParseTextByXPath(HtmlNode htmlNode, string xPath)
         {
             var searchedHtmlNode = htmlNode.SelectSingleNode(xPath);
-            return ParseText(searchedHtmlNode);
+            var text = ParseText(searchedHtmlNode);
+
+            return text;
         }
 
         public virtual string RemoveSpaces(string data)
@@ -65,6 +63,20 @@ namespace DataAggregationService.Aggregators.Common.Services
 
             foreach (var symbol in spaces)
                 data = data.Replace(symbol, "");
+
+            return data.Trim();
+        }
+        
+        private string ReplaceHtmlHarmfulSymbols(string data)
+        {
+            var harmfulSymbols = new Dictionary<string, string>
+            {
+                {"&nbsp;", " "}, // non-breaking space
+                {"&#x27;", "'"}
+            };
+
+            foreach (var symbol in harmfulSymbols)
+                data = data.Replace(symbol.Key, symbol.Value);
 
             return data.Trim();
         }

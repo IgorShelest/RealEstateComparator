@@ -2,9 +2,9 @@
 using System.Threading.Tasks;
 using ApplicationContexts.Models;
 using DataAggregationService.Interfaces;
-using DataAgregationService.Parsers.LunUa;
+using DataAgregationService.Agregators.LunUa.Services;
 
-namespace DataAggregationService.Parsers.LunUa
+namespace DataAgregationService.Aggregators.LunUa
 {
     class LunUaAggregator : IAggregator
     {
@@ -12,11 +12,11 @@ namespace DataAggregationService.Parsers.LunUa
         private readonly ApartComplexHandler _apartComplexHandler;
         private readonly ApartmentHandler _apartmentHandler;
 
-        public LunUaAggregator()
+        public LunUaAggregator(CityHandler cityHandler, ApartComplexHandler apartComplexHandler, ApartmentHandler apartmentHandler)
         {
-            _cityHandler = new CityHandler();
-            _apartComplexHandler = new ApartComplexHandler();
-            _apartmentHandler = new ApartmentHandler();
+            _cityHandler = cityHandler;
+            _apartComplexHandler = apartComplexHandler;
+            _apartmentHandler = apartmentHandler;
         }
 
         public async Task<IEnumerable<ApartComplex>> AggregateData()

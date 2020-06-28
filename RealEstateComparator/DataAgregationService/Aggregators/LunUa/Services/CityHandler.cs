@@ -2,20 +2,21 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using DataAggregationService.Aggregators.Common.Services;
-using DataAggregationService.Parsers.Common;
+using DataAggregationService.Aggregators.Common;
+using DataAgregationService.Aggregators.LunUa;
 using HtmlAgilityPack;
 
-namespace DataAgregationService.Parsers.LunUa
+namespace DataAgregationService.Agregators.LunUa.Services
 {
     public class CityHandler
     {
         private readonly PageHandler _pageHandler;
         private readonly HtmlParser _htmlParser;
 
-        public CityHandler()
+        public CityHandler(PageHandler pageHandler, HtmlParser htmlParser)
         {
-            _pageHandler = new PageHandler();
-            _htmlParser = new HtmlParser();
+            _pageHandler = pageHandler;
+            _htmlParser = htmlParser;
         }
      
         public async Task<IEnumerable<CityData>> GetCityData()

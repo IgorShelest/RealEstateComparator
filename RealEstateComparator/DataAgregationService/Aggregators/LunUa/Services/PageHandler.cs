@@ -6,48 +6,48 @@ using System.Threading.Tasks;
 using DataAggregationService.Aggregators.Common.Services;
 using HtmlAgilityPack;
 
-namespace DataAgregationService.Parsers.LunUa
+namespace DataAgregationService.Aggregators.LunUa
 {
     public class PageHandler
     {
         private readonly HtmlParser _htmlParser;
         private static readonly string _homePageUrl = "https://lun.ua";
 
-        public PageHandler()
+        public PageHandler(HtmlParser htmlParser)
         {
-            _htmlParser = new HtmlParser();
+            _htmlParser = htmlParser;
         }
         
-        public string CreateLunUaUrl(string hRef)
+        public virtual string CreateLunUaUrl(string hRef)
         {
             return _htmlParser.CreateUrl(_homePageUrl, hRef);
         }
         
-        public string CreatePageUrl(string url, int pageNumber)
+        public virtual string CreatePageUrl(string url, int pageNumber)
         {
             const string pageTag = "?page=";
             return url + pageTag + pageNumber;
         }
         
-        public async Task<HtmlNodeCollection> LoadCityHtml()
+        public virtual async Task<HtmlNodeCollection> LoadCityHtml()
         {
             const string cityXPath = "//*[@id='geo-control']/div[3]/div[2]/div/div[4]/a[*]";
             return await _htmlParser.LoadHtmlNodes(_homePageUrl, cityXPath);
         }
 
-        public string ParseApartComplexText(HtmlNode htmlNode)
+        public virtual string ParseApartComplexText(HtmlNode htmlNode)
         {
             const string apartComplexNameXPath = ".//a/div[3]/div[@class='card-title']";
             return _htmlParser.ParseTextByXPath(htmlNode, apartComplexNameXPath);
         }
 
-        public string ParseApartComplexHRef(HtmlNode htmlNode)
+        public virtual string ParseApartComplexHRef(HtmlNode htmlNode)
         {
             const string apartComplexHRefXPath = ".//a";
             return _htmlParser.ParseHrefByXPath(htmlNode, apartComplexHRefXPath);
         }
 
-        public async Task<bool> NextPageExists(string currentPageUrl)
+        public virtual async Task<bool> NextPageExists(string currentPageUrl)
         {
             const string pageNumberXPath = "//*[@id='search-results']/div[4]/div/button[@data-analytics-click='catalog|pagination|page_click']";
             var htmlNodes = await _htmlParser.LoadHtmlNodes(currentPageUrl, pageNumberXPath);
@@ -62,7 +62,7 @@ namespace DataAgregationService.Parsers.LunUa
             return nextPageExists;
         }
 
-        public async Task<HtmlNode> LoadApartComplexDataHtml(string url)
+        public virtual async Task<HtmlNode> LoadApartComplexDataHtml(string url)
         {
             const string apartComplexGroupXPath = "/html/body/div[3]/div[2]/div[2]/a[1]";
             var apartComplexes = await _htmlParser.LoadHtmlNodes(url, apartComplexGroupXPath);
@@ -70,14 +70,14 @@ namespace DataAgregationService.Parsers.LunUa
             return apartComplexes.First();
         }
 
-        public async Task<HtmlNodeCollection> LoadApartComplexesHtml(string url)
+        public virtual async Task<HtmlNodeCollection> LoadApartComplexesHtml(string url)
         {
             const string apartComplexXPath = "//*[@id='search-results']/div[3]/div[*]/div";
             var apartComplexesForPage = await _htmlParser.LoadHtmlNodes(url, apartComplexXPath);
             return apartComplexesForPage;
         }
 
-        public async Task<HtmlNodeCollection> LoadApartmentsHtml(string url)
+        public virtual async Task<HtmlNodeCollection> LoadApartmentsHtml(string url)
         {
             try
             {
@@ -91,7 +91,7 @@ namespace DataAgregationService.Parsers.LunUa
             }
         }
 
-        public int ParseHtmlNumOfRooms(HtmlNode apartment)
+        public virtual int ParseHtmlNumOfRooms(HtmlNode apartment)
         {
             const string numOfRoomsPattern = @"^(?<num>\d+)";
             var numOfRoomsRegex = new Regex(numOfRoomsPattern);
@@ -102,7 +102,7 @@ namespace DataAgregationService.Parsers.LunUa
             return match.Success ? int.Parse(match.Groups["num"].Value) : default;
         }
         
-        public bool HasMultipleFloors(HtmlNode apartment)
+        public virtual bool HasMultipleFloors(HtmlNode apartment)
         {
             const string numOfFloorsPattern = @"^(?<num>[А-ЯІ][а-яі]+)";
             var numOfRoomsPattern = new Regex(numOfFloorsPattern);
@@ -113,7 +113,7 @@ namespace DataAgregationService.Parsers.LunUa
             return match.Success;
         }
         
-        public Tuple<int, int> ParseHtmlRoomSpace(HtmlNode apartment)
+        public virtual Tuple<int, int> ParseHtmlRoomSpace(HtmlNode apartment)
         {
             // Preset data
             const string minTag = "min";
@@ -148,7 +148,7 @@ namespace DataAgregationService.Parsers.LunUa
             return default;
         }
 
-        public Tuple<int, int> ParseHtmlApartPrice(HtmlNode apartment)
+        public virtual Tuple<int, int> ParseHtmlApartPrice(HtmlNode apartment)
         {
             // Preset data
             const string minTag = "min";

@@ -1,4 +1,4 @@
-namespace DataAggregationService.Parsers.DomRia.Data
+namespace DataAggregationService.Aggregators.DomRia.Data
 {
     public class ApartmentTransferData
     {

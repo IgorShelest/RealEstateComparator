@@ -1,4 +1,4 @@
-﻿namespace DataAggregationService.Parsers.Common
+﻿namespace DataAggregationService.Aggregators.Common
 {
     public struct CityData
     {

@@ -4,10 +4,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using ApplicationContexts.Models;
 using DataAggregationService.Aggregators.Common.Services;
-using DataAggregationService.Parsers.Common;
+using DataAggregationService.Aggregators.Common;
 using HtmlAgilityPack;
 
-namespace DataAgregationService.Parsers.LunUa
+namespace DataAgregationService.Aggregators.LunUa
 {
     public class ApartComplexHandler
     {
@@ -16,10 +16,10 @@ namespace DataAgregationService.Parsers.LunUa
 
         private const string _source = "LunUa";
         
-        public ApartComplexHandler()
+        public ApartComplexHandler(PageHandler pageHandler, HtmlParser htmlParser)
         {
-            _pageHandler = new PageHandler();
-            _htmlParser = new HtmlParser();
+            _pageHandler = pageHandler;
+            _htmlParser = htmlParser;
         }
         
         public async Task<IEnumerable<ApartComplex>> GetApartComplexes(IEnumerable<CityData> allCitiesData)
@@ -49,7 +49,7 @@ namespace DataAgregationService.Parsers.LunUa
             }
         }
         
-        private async Task<ApartComplexesDataPerCity> GetApartComplexData(CityData cityData)
+        private async Task<ApartComplexesGroupData> GetApartComplexData(CityData cityData)
         {
             var apartComplexGroupHtml = await _pageHandler.LoadApartComplexDataHtml(cityData.Url);
             var apartComplexData = CreateApartComplexData(cityData, apartComplexGroupHtml);
@@ -57,7 +57,7 @@ namespace DataAgregationService.Parsers.LunUa
             return apartComplexData;
         }
         
-        private async Task<IEnumerable<ApartComplex>> GetApartComplexesForAllPages(ApartComplexesDataPerCity apartComplexesDataPerCity)
+        private async Task<IEnumerable<ApartComplex>> GetApartComplexesForAllPages(ApartComplexesGroupData apartComplexesGroupData)
         {
             var pageNumber = 1;
             string currentPageUrl;
@@ -65,10 +65,10 @@ namespace DataAgregationService.Parsers.LunUa
 
             do
             {
-                currentPageUrl = _pageHandler.CreatePageUrl(apartComplexesDataPerCity.Url, pageNumber++);
-                apartComplexesPerPage.AddRange(await GetApartComplexesPerPage(currentPageUrl, apartComplexesDataPerCity.CityName));
+                currentPageUrl = _pageHandler.CreatePageUrl(apartComplexesGroupData.Url, pageNumber++);
+                apartComplexesPerPage.AddRange(await GetApartComplexesPerPage(currentPageUrl, apartComplexesGroupData.CityName));
             }
-            while (false); // */(await _pageHandler.NextPageExists(currentPageUrl));
+            while /*(false);*/ (await _pageHandler.NextPageExists(currentPageUrl));
 
             return apartComplexesPerPage;
         }
@@ -79,7 +79,7 @@ namespace DataAgregationService.Parsers.LunUa
             {
                 var apartComplexesHtml = await _pageHandler.LoadApartComplexesHtml(currentPageUrl);
                 var apartComplexes = apartComplexesHtml
-                    .Select(complex => CreateApartComplex(complex, cityName));
+                    .Select(complexHtml => CreateApartComplex(complexHtml, cityName));
 
                 return apartComplexes;
             }
@@ -90,23 +90,23 @@ namespace DataAgregationService.Parsers.LunUa
             }
         }
         
-        private ApartComplexesDataPerCity CreateApartComplexData(CityData cityData, HtmlNode parsedApartComplexGroupData)
+        private ApartComplexesGroupData CreateApartComplexData(CityData cityData, HtmlNode parsedApartComplexGroupData)
         {
-            return new ApartComplexesDataPerCity
+            return new ApartComplexesGroupData
             {
                 CityName = cityData.Name,
                 Url = _pageHandler.CreateLunUaUrl(_htmlParser.ParseHref(parsedApartComplexGroupData))
             };
         }
 
-        private ApartComplex CreateApartComplex(HtmlNode complex, string cityName)
+        private ApartComplex CreateApartComplex(HtmlNode complexHtml, string cityName)
         {
             var temp = new ApartComplex()
             {
                 Source = _source,
-                Name = _pageHandler.ParseApartComplexText(complex),
+                Name = _pageHandler.ParseApartComplexText(complexHtml),
                 CityName = cityName,
-                Url = _pageHandler.CreateLunUaUrl(_pageHandler.ParseApartComplexHRef(complex))
+                Url = _pageHandler.CreateLunUaUrl(_pageHandler.ParseApartComplexHRef(complexHtml))
             };
 
             return temp;

@@ -3,18 +3,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ApplicationContexts.Models;
-using DataAggregationService.Parsers.DomRia.Data;
+using DataAggregationService.Aggregators.DomRia.Data;
 using HtmlAgilityPack;
 
-namespace DataAggregationService.Parsers.DomRia.Services
+namespace DataAggregationService.Aggregators.DomRia.Services
 {
     public class ApartmentHandler
     {
         private readonly PageHandler _pageHandler;
 
-        public ApartmentHandler()
+        public ApartmentHandler(PageHandler pageHandler)
         {
-            _pageHandler = new PageHandler();
+            _pageHandler = pageHandler;
         }
 
         public async Task SetApartments(IEnumerable<ApartComplex> apartComplexes)

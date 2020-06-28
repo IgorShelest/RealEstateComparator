@@ -4,19 +4,19 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using DataAggregationService.Aggregators.Common.Services;
-using DataAggregationService.Parsers.DomRia.Data;
+using DataAggregationService.Aggregators.DomRia.Data;
 using HtmlAgilityPack;
 
-namespace DataAggregationService.Parsers.DomRia.Services
+namespace DataAggregationService.Aggregators.DomRia.Services
 {
     public class PageHandler
     {
         private readonly HtmlParser _htmlParser;
         private static readonly string _homePageUrl = "https://dom.ria.com";
         
-        public PageHandler()
+        public PageHandler(HtmlParser htmlParser)
         {
-            _htmlParser = new HtmlParser();    
+            _htmlParser = htmlParser;    
         }
         
         public  async Task<HtmlNodeCollection> LoadApartComplexDataHtml()

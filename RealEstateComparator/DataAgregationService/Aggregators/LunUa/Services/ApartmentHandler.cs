@@ -5,15 +5,15 @@ using System.Threading.Tasks;
 using ApplicationContexts.Models;
 using HtmlAgilityPack;
 
-namespace DataAgregationService.Parsers.LunUa
+namespace DataAgregationService.Aggregators.LunUa
 {
     public class ApartmentHandler
     {
         private readonly PageHandler _pageHandler;
 
-        public ApartmentHandler()
+        public ApartmentHandler(PageHandler pageHandler)
         {
-            _pageHandler = new PageHandler();
+            _pageHandler = pageHandler;
         }
 
         public async Task SetApartments(IEnumerable<ApartComplex> apartComplexes)

@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ApplicationContexts.Models;
+using DataAggregationService.Aggregators.Common;
 using DataAggregationService.Aggregators.Common.Services;
-using DataAggregationService.Parsers.Common;
 using HtmlAgilityPack;
 
-namespace DataAggregationService.Parsers.DomRia.Services
+namespace DataAggregationService.Aggregators.DomRia.Services
 {
     public class ApartComplexHandler
     {
@@ -15,10 +15,10 @@ namespace DataAggregationService.Parsers.DomRia.Services
         private readonly HtmlParser _htmlParser;
         private const string _source = "DomRia";
 
-        public ApartComplexHandler()
+        public ApartComplexHandler(PageHandler pageHandler, HtmlParser htmlParser)
         {
-            _pageHandler = new PageHandler();
-            _htmlParser = new HtmlParser();
+            _pageHandler = pageHandler;
+            _htmlParser = htmlParser;
         }
         
         public async Task<IEnumerable<ApartComplex>> GetApartComplexes()
@@ -33,7 +33,7 @@ namespace DataAggregationService.Parsers.DomRia.Services
             return combinedResults;
         }
         
-        private async Task<IEnumerable<ApartComplexesDataPerCity>> GetApartComplexData()
+        private async Task<IEnumerable<ApartComplexesGroupData>> GetApartComplexData()
         {
             var apartComplexHtml = await _pageHandler.LoadApartComplexDataHtml();
             var apartComplexData = CreateApartComplexData(apartComplexHtml);
@@ -41,10 +41,10 @@ namespace DataAggregationService.Parsers.DomRia.Services
             return apartComplexData;
         }
 
-        private IEnumerable<ApartComplexesDataPerCity> CreateApartComplexData(HtmlNodeCollection cityHtml)
+        private IEnumerable<ApartComplexesGroupData> CreateApartComplexData(HtmlNodeCollection cityHtml)
         {
             var apartComplexesData = cityHtml?.Select(node =>
-                new ApartComplexesDataPerCity()
+                new ApartComplexesGroupData()
                 {
                     CityName = _htmlParser.ParseText(node),                        
                     Url = _pageHandler.CreateDomRiaUrl(_htmlParser.ParseHref(node))
@@ -54,11 +54,11 @@ namespace DataAggregationService.Parsers.DomRia.Services
             return apartComplexesData;
         }
         
-        private async Task<IEnumerable<ApartComplex>> GetApartComplexesPerCity(ApartComplexesDataPerCity apartComplexDataPerCity)
+        private async Task<IEnumerable<ApartComplex>> GetApartComplexesPerCity(ApartComplexesGroupData apartComplexGroupData)
         {
             try
             {
-                var apartComplexesPerCity = await GetApartComplexesForAllPages(apartComplexDataPerCity);
+                var apartComplexesPerCity = await GetApartComplexesForAllPages(apartComplexGroupData);
 
                 return apartComplexesPerCity;
             }
@@ -69,7 +69,7 @@ namespace DataAggregationService.Parsers.DomRia.Services
             }
         }
         
-        private async Task<IEnumerable<ApartComplex>> GetApartComplexesForAllPages(ApartComplexesDataPerCity apartComplexesDataPerCity)
+        private async Task<IEnumerable<ApartComplex>> GetApartComplexesForAllPages(ApartComplexesGroupData apartComplexesGroupData)
         {
             var pageNumber = 1;
             string currentPageUrl;
@@ -77,8 +77,8 @@ namespace DataAggregationService.Parsers.DomRia.Services
 
             do
             {
-                currentPageUrl = _pageHandler.CreatePageUrl(apartComplexesDataPerCity.Url, pageNumber++);
-                var apartComplexesPerPage = await GetApartComplexesPerPage(currentPageUrl, apartComplexesDataPerCity.CityName);
+                currentPageUrl = _pageHandler.CreatePageUrl(apartComplexesGroupData.Url, pageNumber++);
+                var apartComplexesPerPage = await GetApartComplexesPerPage(currentPageUrl, apartComplexesGroupData.CityName);
                 apartComplexesPerCity.AddRange(apartComplexesPerPage);
             } while (false);//await _pageHandler.NextPageExists(currentPageUrl));
 

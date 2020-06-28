@@ -1,6 +1,6 @@
-﻿namespace DataAggregationService.Parsers.Common
+﻿namespace DataAggregationService.Aggregators.Common
 {
-    public struct ApartComplexesDataPerCity
+    public struct ApartComplexesGroupData
     {
         public string CityName { get; set; }
 
