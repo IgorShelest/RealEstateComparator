@@ -17,7 +17,7 @@ namespace DataAggregationService.Aggregators.DomRia
             _apartmentHandler = apartmentHandler;
         }
 
-        public async Task<IEnumerable<ApartComplex>> AggregateData()
+        public virtual async Task<IEnumerable<ApartComplex>> AggregateData()
         {
             var apartComplexes = await _apartComplexHandler.GetApartComplexes();
             await _apartmentHandler.SetApartments(apartComplexes);

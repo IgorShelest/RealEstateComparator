@@ -6,7 +6,7 @@ using DataAggregationService.Interfaces;
 
 namespace DataAggregationService.Aggregators.LunUa
 {
-    class LunUaAggregator : IAggregator
+    public class LunUaAggregator : IAggregator
     {
         private readonly CityHandler _cityHandler;
         private readonly ApartComplexHandler _apartComplexHandler;
@@ -19,7 +19,7 @@ namespace DataAggregationService.Aggregators.LunUa
             _apartmentHandler = apartmentHandler;
         }
 
-        public async Task<IEnumerable<ApartComplex>> AggregateData()
+        public virtual async Task<IEnumerable<ApartComplex>> AggregateData()
         {
             var citiesData = await _cityHandler.GetCityData();
             var apartComplexes = await _apartComplexHandler.GetApartComplexes(citiesData);

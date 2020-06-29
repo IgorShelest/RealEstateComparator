@@ -11,13 +11,13 @@ namespace DataAggregationService
     public class DataAggregator
     {
         private readonly IApartComplexRepository _apartComplexRepository;
-        private IEnumerable<IAggregator> _parsers;
+        private IEnumerable<IAggregator> _aggregators;
         private IEnumerable<ApartComplex> _apartComplexes;
 
-        public DataAggregator(IApartComplexRepository apartComplexRepository, IEnumerable<IAggregator> parsers)
+        public DataAggregator(IApartComplexRepository apartComplexRepository, IEnumerable<IAggregator> aggregators)
         {
             _apartComplexRepository = apartComplexRepository;
-            _parsers = parsers;
+            _aggregators = aggregators;
         }
 
         public async Task Run()
@@ -30,7 +30,7 @@ namespace DataAggregationService
 
         private async Task GetData()
         {
-            var getDataTasks = _parsers.Select(parser => parser.AggregateData());
+            var getDataTasks = _aggregators.Select(aggregator => aggregator.AggregateData());
             var getDataResults = await Task.WhenAll(getDataTasks);
             
             var apartComplexes = new List<ApartComplex>();
