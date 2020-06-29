@@ -25,7 +25,7 @@ namespace DataAggregationService
             await GetData();
             ValidateData();
             PrintData();
-            UpdateDb();
+            await UpdateDb();
         }
 
         private async Task GetData()
@@ -43,9 +43,9 @@ namespace DataAggregationService
             _apartComplexes = _apartComplexes.Where(complex => complex.Apartments != null);
         }
 
-        private void UpdateDb()
+        private async Task UpdateDb()
         {
-            _apartComplexRepository.UpdateDb(_apartComplexes);
+            await _apartComplexRepository.UpdateDb(_apartComplexes);
         }
 
         private void PrintData()

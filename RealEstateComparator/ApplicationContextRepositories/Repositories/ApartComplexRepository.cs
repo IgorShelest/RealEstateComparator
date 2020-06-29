@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using ApplicationContexts;
 using ApplicationContexts.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace ApplicationContextRepositories
 {
@@ -13,10 +15,15 @@ namespace ApplicationContextRepositories
             _applicationContext = applicationContext;
         }
 
-        public void UpdateDb(IEnumerable<ApartComplex> apartComplexes)
+        public async Task UpdateDb(IEnumerable<ApartComplex> apartComplexes)
         {
-            _applicationContext.ApartComplexes.AddRange(apartComplexes);
+            await _applicationContext.ApartComplexes.AddRangeAsync(apartComplexes);
             _applicationContext.Save();
+        }
+
+        public async Task<ApartComplex> GetApartComplex(int complexId)
+        {
+            return await _applicationContext.ApartComplexes.FirstOrDefaultAsync(complex => complex.Id == complexId);
         }
     }
 }

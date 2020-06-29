@@ -52,9 +52,14 @@ namespace DataAggregationService.Tests
         {
             public IEnumerable<ApartComplex> _apartComplexes;
         
-            public void UpdateDb(IEnumerable<ApartComplex> apartComplexes)
+            public async Task UpdateDb(IEnumerable<ApartComplex> apartComplexes)
             {
                 _apartComplexes = apartComplexes;
+            }
+
+            public Task<ApartComplex> GetApartComplex(int ComplexId)
+            {
+                throw new NotImplementedException();
             }
         }
 

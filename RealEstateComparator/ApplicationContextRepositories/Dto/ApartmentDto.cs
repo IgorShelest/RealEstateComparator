@@ -1,9 +1,7 @@
-﻿namespace ApplicationContexts.Models
+namespace ApplicationContextRepositories.Dto
 {
-    public class Apartment
+    public class ApartmentDto
     {
-        public int Id { get; set; }
-                        
         public int NumberOfRooms { get; set; }
                         
         public bool HasMultipleFloors { get; set; }
@@ -15,9 +13,7 @@
         public int SquareMeterPriceMin { get; set; }
 
         public int SquareMeterPriceMax { get; set; }
-
-        public int ComplexId { get; set; }
         
-        public ApartComplex Complex { get; set; }
+        public int ComplexId { get; set; }
     }
 }

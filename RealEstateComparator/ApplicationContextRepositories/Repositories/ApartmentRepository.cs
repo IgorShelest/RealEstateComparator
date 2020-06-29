@@ -3,6 +3,7 @@ using System.Linq;
 using ApplicationContexts;
 using ApplicationContexts.Models;
 using ApplicationContextRepositories.Dto;
+using Microsoft.EntityFrameworkCore;
 
 namespace ApplicationContextRepositories
 {
@@ -21,8 +22,8 @@ namespace ApplicationContextRepositories
                 .Where(apartment => apartmentSpecs.City == apartment.Complex.CityName)
                 .Where(apartment => apartmentSpecs.NumberOfRooms == apartment.NumberOfRooms)
                 .Where(apartment => apartmentSpecs.HasMultipleFloors == apartment.HasMultipleFloors)
-                .Where(apartment => (apartmentSpecs.DwellingSpace >= apartment.DwellingSpaceMin && apartmentSpecs.DwellingSpace <= apartment.DwellingSpaceMax));
-
+                .Where(apartment => (apartmentSpecs.DwellingSpace >= apartment.DwellingSpaceMin &&
+                                     apartmentSpecs.DwellingSpace <= apartment.DwellingSpaceMax));
             return apartments;
         }
     }

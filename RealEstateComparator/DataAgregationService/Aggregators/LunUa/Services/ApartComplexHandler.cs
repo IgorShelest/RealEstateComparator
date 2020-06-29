@@ -68,7 +68,7 @@ namespace DataAggregationService.Aggregators.LunUa.Services
                 currentPageUrl = _pageHandler.CreatePageUrl(apartComplexesGroupData.Url, pageNumber++);
                 apartComplexesPerPage.AddRange(await GetApartComplexesPerPage(currentPageUrl, apartComplexesGroupData.CityName));
             }
-            while /*(false);*/ (await _pageHandler.NextPageExists(currentPageUrl));
+            while (false); // (await _pageHandler.NextPageExists(currentPageUrl));
 
             return apartComplexesPerPage;
         }

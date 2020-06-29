@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using ApplicationContextRepositories;
 using ApplicationContextRepositories.Dto;
 using ApplicationContexts.Models;
@@ -10,10 +11,12 @@ namespace RealEstateComparatorService.Services
     public class RealEstateService : IRealEstateService
     {
         private readonly IApartmentRepository _apartmentRepository;
+        private readonly IApartComplexRepository _apartComplexRepository;
 
-        public RealEstateService(IApartmentRepository apartmentRepository)
+        public RealEstateService(IApartmentRepository apartmentRepository, IApartComplexRepository apartComplexRepository)
         {
             _apartmentRepository = apartmentRepository;
+            _apartComplexRepository = apartComplexRepository;
         }
 
         public IEnumerable<Apartment> GetBetterApartments(ApartmentSpecsDto apartmentSpecs)
@@ -22,6 +25,11 @@ namespace RealEstateComparatorService.Services
             var betterApartments = SelectApartmentsByPriceSpecs(apartmentsByPhysicalSpecs, apartmentSpecs);
 
             return betterApartments.ToList();
+        }
+
+        public async Task<ApartComplex> GetApartComplex(int complexId)
+        {
+            return await _apartComplexRepository.GetApartComplex(complexId);
         }
 
         private IEnumerable<Apartment> SelectApartmentsByPhysicalsSpecs(ApartmentSpecsDto apartmentSpecs)
