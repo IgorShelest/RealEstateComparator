@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using ApplicationContexts.Models;
 using HtmlAgilityPack;
 
-namespace DataAgregationService.Aggregators.LunUa
+namespace DataAggregationService.Aggregators.LunUa.Services
 {
     public class ApartmentHandler
     {

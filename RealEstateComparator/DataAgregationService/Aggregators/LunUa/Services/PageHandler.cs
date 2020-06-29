@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using DataAggregationService.Aggregators.Common.Services;
 using HtmlAgilityPack;
 
-namespace DataAgregationService.Aggregators.LunUa
+namespace DataAggregationService.Aggregators.LunUa.Services
 {
     public class PageHandler
     {

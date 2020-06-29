@@ -80,7 +80,7 @@ namespace DataAggregationService.Aggregators.DomRia.Services
                 currentPageUrl = _pageHandler.CreatePageUrl(apartComplexesGroupData.Url, pageNumber++);
                 var apartComplexesPerPage = await GetApartComplexesPerPage(currentPageUrl, apartComplexesGroupData.CityName);
                 apartComplexesPerCity.AddRange(apartComplexesPerPage);
-            } while (false);//await _pageHandler.NextPageExists(currentPageUrl));
+            } while /*(false);*/ (await _pageHandler.NextPageExists(currentPageUrl));
 
             return apartComplexesPerCity;
         }

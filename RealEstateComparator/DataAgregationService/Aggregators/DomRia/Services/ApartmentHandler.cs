@@ -28,7 +28,8 @@ namespace DataAggregationService.Aggregators.DomRia.Services
             try
             {
                 var htmlNodes = await _pageHandler.LoadApartmentsHtml(url);
-                return CreateApartmentsPerApartComplex(htmlNodes);
+                var apartments =  CreateApartmentsPerApartComplex(htmlNodes);
+                return apartments;
             }
             catch (Exception e)
             {
@@ -47,7 +48,7 @@ namespace DataAggregationService.Aggregators.DomRia.Services
         {
             var numOfRooms = _pageHandler.ParseHtmlNumOfRooms(node);
             var hasMultipleFloors = _pageHandler.HasMultipleFloors(node);
-            var roomSpace = PageHandler.ParseHtmlRoomSpace(node, ref transferData);
+            var roomSpace = _pageHandler.ParseHtmlRoomSpace(node, ref transferData);
             var price = _pageHandler.ParseHtmlApartPrice(node, ref transferData);
 
             return new Apartment

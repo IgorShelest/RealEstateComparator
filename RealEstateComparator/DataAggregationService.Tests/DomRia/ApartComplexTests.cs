@@ -4,12 +4,12 @@ using System.Threading.Tasks;
 using ApplicationContexts.Models;
 using DataAggregationService.Aggregators.Common;
 using DataAggregationService.Aggregators.Common.Services;
-using DataAggregationService.Aggregators.LunUa.Services;
+using DataAggregationService.Aggregators.DomRia.Services;
 using HtmlAgilityPack;
 using Moq;
 using Xunit;
 
-namespace DataAggregationService.Tests
+namespace DataAggregationService.Tests.DomRia
 {
     public class ApartComplexTests
     {
@@ -28,10 +28,9 @@ namespace DataAggregationService.Tests
             var expectedResult = CreateExpectedResult(apartComplexes).ToList();
             
             var htmlWebMoc = new Mock<HtmlWeb>();
-            var htmlParserMock = MockHtmlParser(htmlWebMoc, apartComplexGroupHtmls, apartComplexGroupHrefs);
+            var htmlParserMock = MockHtmlParser(htmlWebMoc, apartComplexGroupHtmls, apartComplexGroupHrefs, cityData);
             var pageHandlerMock = MockPageHandler(
-                htmlParserMock, 
-                cityData, 
+                htmlParserMock,
                 apartComplexGroupHtmls, 
                 apartComplexGroupHrefs, 
                 apartComplexGroupUrls, 
@@ -42,7 +41,7 @@ namespace DataAggregationService.Tests
             var apartComplexHandler = new ApartComplexHandler(pageHandlerMock.Object, htmlParserMock.Object);
 
             // Act
-            var actualResult = (await apartComplexHandler.GetApartComplexes(cityData)).ToList();
+            var actualResult = (await apartComplexHandler.GetApartComplexes()).ToList();
             
             // Assert
             Assert.Equal(expectedResult.Count(), actualResult.Count());
@@ -87,10 +86,11 @@ namespace DataAggregationService.Tests
             };
         }
 
-        private Mock<HtmlParser> MockHtmlParser(Mock<HtmlWeb> htmlWebMoc, IEnumerable<HtmlNode> apartComplexGroupHtml, IEnumerable<string> apartComplexGroupHref)
+        private Mock<HtmlParser> MockHtmlParser(Mock<HtmlWeb> htmlWebMoc, IEnumerable<HtmlNode> apartComplexGroupHtml, IEnumerable<string> apartComplexGroupHref, IEnumerable<CityData> cityData)
         {
             var htmlParserMock = new Mock<HtmlParser>(htmlWebMoc.Object);
             MockParseHref(htmlParserMock, apartComplexGroupHtml, apartComplexGroupHref);
+            MockParseText(htmlParserMock, apartComplexGroupHtml, cityData);
             
             return htmlParserMock;
         }
@@ -108,10 +108,22 @@ namespace DataAggregationService.Tests
             }
         }
 
+        private void MockParseText(Mock<HtmlParser> htmlParserMock, IEnumerable<HtmlNode> apartComplexGroupHtmlInput, IEnumerable<CityData> cityDataInput)
+        {
+            var cityData = cityDataInput.ToList();
+            var apartComplexGroupHtml = apartComplexGroupHtmlInput.ToList();
+
+            for (var iter = 0; iter < apartComplexGroupHtml.Count(); iter++)
+            {
+                htmlParserMock
+                    .Setup(htmlParser => htmlParser.ParseText(apartComplexGroupHtml[iter]))
+                    .Returns(cityData[iter].Name);
+            }
+        }
+
         private Mock<PageHandler> MockPageHandler(
             Mock<HtmlParser> htmlParser, 
-            IEnumerable<CityData> cityData, 
-            IEnumerable<HtmlNode> apartComplexGroupHtml, 
+            HtmlNodeCollection apartComplexGroupHtml, 
             IEnumerable<string> apartComplexGroupHref, 
             IEnumerable<string> apartComplexGroupUrls,
             IEnumerable<ApartComplexesGroupData> apartComplexesGroupDatas,
@@ -120,7 +132,7 @@ namespace DataAggregationService.Tests
             IEnumerable<IEnumerable<IEnumerable<ApartComplex>>> apartComplexes)
         {
             var pageHandlerMock = new Mock<PageHandler>(htmlParser.Object);
-            MockLoadApartComplexDataHtml(pageHandlerMock, cityData, apartComplexGroupHtml);
+            MockLoadApartComplexDataHtml(pageHandlerMock, apartComplexGroupHtml);
             MockCreateLunUaUrl(pageHandlerMock, apartComplexGroupHref, apartComplexGroupUrls);
             MockCreatePageUrl(pageHandlerMock, apartComplexesGroupDatas, apartComplexGroupPageUrls);
             MockLoadApartComplexesHtml(pageHandlerMock, apartComplexHtmls, apartComplexGroupPageUrls);
@@ -216,7 +228,7 @@ namespace DataAggregationService.Tests
                     {
                         pageHandlerMock
                             .Setup(pageHandler =>
-                                pageHandler.CreateLunUaUrl(apartComplexPerPage[apartComplexIter].Url))
+                                pageHandler.CreateDomRiaUrl(apartComplexPerPage[apartComplexIter].Url))
                             .Returns(apartComplexPerPage[apartComplexIter].Url);
                     }
                 }
@@ -266,7 +278,7 @@ namespace DataAggregationService.Tests
             for (var iter = 0; iter < apartComplexGroupHref.Count(); iter++)
             {
                 pageHandlerMock
-                    .Setup(pageHandler => pageHandler.CreateLunUaUrl(apartComplexGroupHref[iter]))
+                    .Setup(pageHandler => pageHandler.CreateDomRiaUrl(apartComplexGroupHref[iter]))
                     .Returns(apartComplexGroupUrls[iter]);
             }
         }
@@ -280,27 +292,21 @@ namespace DataAggregationService.Tests
             };
         }
 
-        private void MockLoadApartComplexDataHtml(Mock<PageHandler> pageHandlerMock, IEnumerable<CityData> cityDataInput, IEnumerable<HtmlNode> apartComplexGroupHtmlInput)
+        private void MockLoadApartComplexDataHtml(Mock<PageHandler> pageHandlerMock, HtmlNodeCollection apartComplexGroupHtmls)
         {
-            var cityData = cityDataInput.ToList();
-            var apartComplexGroupHtml = apartComplexGroupHtmlInput.ToList();
-
-            for (var iter = 0; iter < cityData.Count(); iter++)
-            {
-                pageHandlerMock
-                    .Setup(pageHandler => pageHandler.LoadApartComplexDataHtml(cityData[iter].Url))
-                    .ReturnsAsync(apartComplexGroupHtml[iter]);
-            }
+            pageHandlerMock
+                .Setup(pageHandler => pageHandler.LoadApartComplexDataHtml())
+                .ReturnsAsync(apartComplexGroupHtmls);
         }
 
-        private IEnumerable<HtmlNode> CreateApartComplexGroupHtmls(IEnumerable<string> apartComplexGroupHrefInput)
+        private HtmlNodeCollection CreateApartComplexGroupHtmls(IEnumerable<string> apartComplexGroupHrefInput)
         {
             var apartComplexGroupHref = apartComplexGroupHrefInput.ToList();
             
             var apartComplexGroup1HtmlLiteral = $"<a href=\"{apartComplexGroupHref[0]}\" data-analytics-click=\"main|buildings_list|goto_view_building\" class=\"chips-chip -dark\">83                        <svg class=\"ico\" xmlns=\"http://www.w3.org/2000/svg\" height=\"24\" viewbox=\"0 0 24 24\" width=\"24\" fill=\"#bdbdbd\"><path d=\"M0 0h24v24H0V0z\" fill=\"none\"></path><path d=\"M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z\"></path></svg></a>";
             var apartComplexGroup2HtmlLiteral = $"<a href=\"{apartComplexGroupHref[1]}\" data-analytics-click=\"main|buildings_list|goto_view_building\" class=\"chips-chip -dark\">33                        <svg class=\"ico\" xmlns=\"http://www.w3.org/2000/svg\" height=\"24\" viewbox=\"0 0 24 24\" width=\"24\" fill=\"#bdbdbd\"><path d=\"M0 0h24v24H0V0z\" fill=\"none\"></path><path d=\"M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z\"></path></svg></a>";
             
-            return new List<HtmlNode>
+            return new HtmlNodeCollection(null)
             {
                 HtmlNode.CreateNode(apartComplexGroup1HtmlLiteral),
                 HtmlNode.CreateNode(apartComplexGroup2HtmlLiteral)
@@ -380,7 +386,7 @@ namespace DataAggregationService.Tests
         {
             var apartComplexHtmls = apartComplexHtmlsInput.ToList();
             var apartComplexes = new List<List<List<ApartComplex>>>();
-            const string source = "LunUa";
+            const string source = "DomRia";
 
             for (var groupIter = 0; groupIter < apartComplexHtmls.Count(); groupIter++)
             {

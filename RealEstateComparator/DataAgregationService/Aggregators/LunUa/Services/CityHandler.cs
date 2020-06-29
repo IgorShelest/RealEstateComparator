@@ -3,10 +3,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using DataAggregationService.Aggregators.Common.Services;
 using DataAggregationService.Aggregators.Common;
-using DataAgregationService.Aggregators.LunUa;
 using HtmlAgilityPack;
 
-namespace DataAgregationService.Agregators.LunUa.Services
+namespace DataAggregationService.Aggregators.LunUa.Services
 {
     public class CityHandler
     {

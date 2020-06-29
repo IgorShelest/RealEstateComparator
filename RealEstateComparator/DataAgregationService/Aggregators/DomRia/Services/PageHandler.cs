@@ -18,44 +18,31 @@ namespace DataAggregationService.Aggregators.DomRia.Services
         {
             _htmlParser = htmlParser;    
         }
-        
-        public  async Task<HtmlNodeCollection> LoadApartComplexDataHtml()
-        {
-            const string cityXPath = "//*[@id='app']/div[3]/div/div[3]/div[6]/ul[17]/li[*]/a";
-            return  await _htmlParser.LoadHtmlNodes(_homePageUrl, cityXPath);
-        }
 
-        public string CreateDomRiaUrl(string hRef)
+        public virtual string CreateDomRiaUrl(string hRef)
         {
             return _htmlParser.CreateUrl(_homePageUrl, hRef);
         }
         
-        public string CreatePageUrl(string url, int pageNumber)
+        public virtual string CreatePageUrl(string url, int pageNumber)
         {
             const string pageTag = "?page=";
             return url + pageTag + pageNumber;
         }
 
-        public async Task<HtmlNodeCollection> LoadApartComplexesHtml(string url)
-        {
-            const string apartComplexXPath = "//*[@id='newbuilds']/section[*]";//"/div/div/h2/a";
-            var apartComplexesForPage = await _htmlParser.LoadHtmlNodes(url, apartComplexXPath);
-            return apartComplexesForPage;
-        }
-
-        public string ParseApartComplexText(HtmlNode htmlNode)
+        public virtual string ParseApartComplexText(HtmlNode htmlNode)
         {
             const string apartComplexNameXPath = ".//div/div/h2/a";
             return _htmlParser.ParseTextByXPath(htmlNode, apartComplexNameXPath);
         }
 
-        public string ParseApartComplexHRef(HtmlNode htmlNode)
+        public virtual string ParseApartComplexHRef(HtmlNode htmlNode)
         {
             const string apartComplexHRefXPath = ".//div/div/h2/a";
             return _htmlParser.ParseHrefByXPath(htmlNode, apartComplexHRefXPath);
         }
 
-        public async Task<bool> NextPageExists(string currentPageUrl)
+        public virtual async Task<bool> NextPageExists(string currentPageUrl)
         {
             const string pageNumberXPath = "//*[@id='pagination']/div/div[1]/div/span[*]";
             var allPageNodes = await _htmlParser.LoadHtmlNodes(currentPageUrl, pageNumberXPath);
@@ -70,8 +57,21 @@ namespace DataAggregationService.Aggregators.DomRia.Services
 
             return nextPageExists;
         }
+        
+        public  virtual async Task<HtmlNodeCollection> LoadApartComplexDataHtml()
+        {
+            const string cityXPath = "//*[@id='app']/div[3]/div/div[3]/div[6]/ul[17]/li[*]/a";
+            return  await _htmlParser.LoadHtmlNodes(_homePageUrl, cityXPath);
+        }
 
-        public async Task<HtmlNodeCollection> LoadApartmentsHtml(string url)
+        public virtual async Task<HtmlNodeCollection> LoadApartComplexesHtml(string url)
+        {
+            const string apartComplexXPath = "//*[@id='newbuilds']/section[*]";
+            var apartComplexesForPage = await _htmlParser.LoadHtmlNodes(url, apartComplexXPath);
+            return apartComplexesForPage;
+        }
+
+        public virtual async Task<HtmlNodeCollection> LoadApartmentsHtml(string url)
         {
             const string apartmentXPath = "//*[@id='pricesBlock']/section/div[3]/table/tbody/tr[*]";
             var apartmentNodes = await _htmlParser.LoadHtmlNodes(url, apartmentXPath);
@@ -81,7 +81,7 @@ namespace DataAggregationService.Aggregators.DomRia.Services
             return apartmentNodes;
         }
 
-        public int ParseHtmlNumOfRooms(HtmlNode apartment)
+        public virtual int ParseHtmlNumOfRooms(HtmlNode apartment)
         {
             const string numOfRoomsPattern = @"^(?<num>\d+)";
             var numOfRoomsRegex = new Regex(numOfRoomsPattern);
@@ -92,7 +92,7 @@ namespace DataAggregationService.Aggregators.DomRia.Services
             return match.Success ? int.Parse(match.Groups["num"].Value) : default;
         }
 
-        public bool HasMultipleFloors(HtmlNode apartment)
+        public virtual bool HasMultipleFloors(HtmlNode apartment)
         {
             const string numOfFloorsPattern = @"^(?<num>[А-ЯІ][а-яі]+)";
             var numOfRoomsPattern = new Regex(numOfFloorsPattern);
@@ -103,7 +103,7 @@ namespace DataAggregationService.Aggregators.DomRia.Services
             return match.Success;
         }
         
-        public static Tuple<int, int> ParseHtmlRoomSpace(HtmlNode apartment, ref ApartmentTransferData transferData)
+        public virtual Tuple<int, int> ParseHtmlRoomSpace(HtmlNode apartment, ref ApartmentTransferData transferData)
         {
             const string roomSpaceXPath = ".//span/b";
             var thisApartmentSpaceText = apartment.SelectSingleNode(roomSpaceXPath).InnerText;
@@ -116,7 +116,7 @@ namespace DataAggregationService.Aggregators.DomRia.Services
             return new Tuple<int, int>(minSpace, maxSpace);
         }
 
-        public Tuple<int, int> ParseHtmlApartPrice(HtmlNode apartment, ref ApartmentTransferData transferData)
+        public virtual Tuple<int, int> ParseHtmlApartPrice(HtmlNode apartment, ref ApartmentTransferData transferData)
         {
             const string priceXPath = ".//td[3]/span/span/b";
             var thisApartmentPriceText = _htmlParser.RemoveSpaces(apartment.SelectSingleNode(priceXPath).InnerText);

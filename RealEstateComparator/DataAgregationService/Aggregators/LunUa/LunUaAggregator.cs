@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using ApplicationContexts.Models;
+using DataAggregationService.Aggregators.LunUa.Services;
 using DataAggregationService.Interfaces;
-using DataAgregationService.Agregators.LunUa.Services;
 
-namespace DataAgregationService.Aggregators.LunUa
+namespace DataAggregationService.Aggregators.LunUa
 {
     class LunUaAggregator : IAggregator
     {

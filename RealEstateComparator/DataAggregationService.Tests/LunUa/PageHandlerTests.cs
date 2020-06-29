@@ -1,13 +1,10 @@
 using System;
-using System.Linq;
-using System.Reflection;
 using System.Threading.Tasks;
 using DataAggregationService.Aggregators.Common.Services;
-using DataAgregationService.Aggregators.LunUa;
+using DataAggregationService.Aggregators.LunUa.Services;
 using HtmlAgilityPack;
 using Xunit;
 using Moq;
-using Moq.Protected;
 
 namespace DataAggregationService.Tests
 {

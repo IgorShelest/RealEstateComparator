@@ -6,8 +6,10 @@ using DataAggregationService.Aggregators.Common.Services;
 using DataAggregationService.Interfaces;
 using DataAggregationService.Aggregators.DomRia;
 using DataAggregationService.Services;
-using DataAgregationService.Aggregators.LunUa;
-using DataAgregationService.Agregators.LunUa.Services;
+using DataAggregationService.Aggregators;
+using DataAggregationService.Aggregators.LunUa.Services;
+using DataAggregationService.Aggregators.DomRia.Services;
+
 using HtmlAgilityPack;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -32,12 +34,18 @@ namespace DataAggregationService
             serviceCollection.AddScoped<DataAggregator>();
             serviceCollection.AddScoped<IApplicationContext>(service => new SQLServerContext(service.GetRequiredService<IConfigHandler>().GetConnectionString("DefaultConnection")));
             serviceCollection.AddScoped<IApartComplexRepository>(service => new ApartComplexRepository(service.GetRequiredService<IApplicationContext>()));
-            serviceCollection.AddScoped<IAggregator, LunUaAggregator>();
-            // serviceCollection.AddScoped<IAggregator, DomRiaAggregator>();
-            serviceCollection.AddScoped<PageHandler>();
+            
+            // serviceCollection.AddScoped<IAggregator, LunUaAggregator>();
+            // serviceCollection.AddScoped<DataAggregationService.Aggregators.LunUa.Services.PageHandler>();
+            // serviceCollection.AddScoped<CityHandler>();
+            // serviceCollection.AddScoped<DataAggregationService.Aggregators.LunUa.Services.ApartComplexHandler>();
+            // serviceCollection.AddScoped<DataAggregationService.Aggregators.LunUa.Services.ApartmentHandler>();
+            
+            serviceCollection.AddScoped<IAggregator, DomRiaAggregator>();
+            serviceCollection.AddScoped<DataAggregationService.Aggregators.DomRia.Services.PageHandler>();
             serviceCollection.AddScoped<CityHandler>();
-            serviceCollection.AddScoped<ApartComplexHandler>();
-            serviceCollection.AddScoped<ApartmentHandler>();
+            serviceCollection.AddScoped<DataAggregationService.Aggregators.DomRia.Services.ApartComplexHandler>();
+            serviceCollection.AddScoped<DataAggregationService.Aggregators.DomRia.Services.ApartmentHandler>();
             
             return serviceCollection;
         }

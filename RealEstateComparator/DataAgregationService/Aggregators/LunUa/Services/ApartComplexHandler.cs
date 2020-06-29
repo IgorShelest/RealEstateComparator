@@ -7,7 +7,7 @@ using DataAggregationService.Aggregators.Common.Services;
 using DataAggregationService.Aggregators.Common;
 using HtmlAgilityPack;
 
-namespace DataAgregationService.Aggregators.LunUa
+namespace DataAggregationService.Aggregators.LunUa.Services
 {
     public class ApartComplexHandler
     {
