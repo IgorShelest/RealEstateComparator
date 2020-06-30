@@ -16,7 +16,7 @@ namespace ApplicationContextRepositories
             _applicationContext = applicationContext;
         }
 
-        public IEnumerable<Apartment> GetApartments(ApartmentSpecsDto apartmentSpecs)
+        public virtual IEnumerable<Apartment> GetApartments(ApartmentSpecsDto apartmentSpecs)
         {
             var apartments = _applicationContext.Apartments
                 .Where(apartment => apartmentSpecs.City == apartment.Complex.CityName)

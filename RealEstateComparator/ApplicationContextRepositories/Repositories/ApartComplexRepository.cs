@@ -21,7 +21,7 @@ namespace ApplicationContextRepositories
             _applicationContext.Save();
         }
 
-        public async Task<ApartComplex> GetApartComplex(int complexId)
+        public virtual async Task<ApartComplex> GetApartComplex(int complexId)
         {
             return await _applicationContext.ApartComplexes.FirstOrDefaultAsync(complex => complex.Id == complexId);
         }
