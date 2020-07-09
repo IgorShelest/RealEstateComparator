@@ -8,7 +8,8 @@ namespace RealEstateComparatorService.Services
     {
         public AutoMapperProfile()  
         {  
-            CreateMap<Apartment, ApartmentDto>();  
+            CreateMap<Apartment, ApartmentDto>();             
+            CreateMap<ApartComplex, ApartComplexDto>();
         } 
     }
 }

@@ -42,7 +42,7 @@ namespace RealEstateComparatorService.Controllers
             var apartComplex = await _realEstateService
                 .GetApartComplex(complexId);
 
-            return Ok(apartComplex);
+            return Ok(_mapper.Map<ApartComplexDto>(apartComplex));
         }
     }
 }
