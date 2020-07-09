@@ -1,14 +1,10 @@
 ﻿using System.Threading.Tasks;
 using ApplicationContextRepositories;
 using ApplicationContexts;
-using ApplicationContexts.Models;
 using DataAggregationService.Aggregators.Common.Services;
 using DataAggregationService.Interfaces;
-using DataAggregationService.Aggregators.DomRia;
 using DataAggregationService.Services;
-using DataAggregationService.Aggregators;
 using DataAggregationService.Aggregators.LunUa.Services;
-using DataAggregationService.Aggregators.DomRia.Services;
 using DataAggregationService.Aggregators.LunUa;
 using HtmlAgilityPack;
 using Microsoft.Extensions.DependencyInjection;

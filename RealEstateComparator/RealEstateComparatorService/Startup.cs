@@ -2,7 +2,6 @@ using System;
 using ApplicationContextRepositories;
 using ApplicationContexts;
 using AutoMapper;
-using DataAggregationService.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;

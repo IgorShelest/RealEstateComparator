@@ -6,7 +6,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ApplicationContextRepositories\ApplicationContextRepositories.csproj" />
-    <ProjectReference Include="..\DataAgregationService\DataAgregationService.csproj" />
   </ItemGroup>
 
   <ItemGroup>

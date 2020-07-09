@@ -1,10 +1,5 @@
-using System;
-using System.Linq;
-using System.Reflection;
-using System.Threading.Tasks;
 using DataAggregationService.Aggregators.Common.Services;
 using HtmlAgilityPack;
-using Moq;
 using Xunit;
 
 namespace DataAggregationService.Tests

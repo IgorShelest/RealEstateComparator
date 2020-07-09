@@ -3,7 +3,6 @@ using System.Linq;
 using ApplicationContexts;
 using ApplicationContexts.Models;
 using ApplicationContextRepositories.Dto;
-using Microsoft.EntityFrameworkCore;
 
 namespace ApplicationContextRepositories
 {

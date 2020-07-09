@@ -3,7 +3,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using DataAggregationService.Aggregators.Common;
 using DataAggregationService.Aggregators.Common.Services;
-using DataAggregationService.Aggregators.LunUa;
 using DataAggregationService.Aggregators.LunUa.Services;
 using HtmlAgilityPack;
 using Moq;

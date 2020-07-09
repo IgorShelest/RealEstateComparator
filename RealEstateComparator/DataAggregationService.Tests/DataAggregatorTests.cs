@@ -3,12 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ApplicationContextRepositories;
-using ApplicationContexts;
 using ApplicationContexts.Models;
 using DataAggregationService.Aggregators.DomRia;
 using DataAggregationService.Aggregators.LunUa;
 using DataAggregationService.Interfaces;
-using Microsoft.EntityFrameworkCore.Infrastructure;
 using Moq;
 using Xunit;
 
