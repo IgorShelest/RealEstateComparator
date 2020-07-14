@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.OpenApi.Models;
 using RealEstateComparatorService.Services;
 
 namespace RealEstateComparatorService
@@ -29,7 +30,10 @@ namespace RealEstateComparatorService
             services.AddScoped<IApartmentRepository, ApartmentRepository>();
             services.AddScoped<IApartComplexRepository, ApartComplexRepository>();
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());  
-
+            services.AddSwaggerGen(swagger =>
+            {
+                swagger.SwaggerDoc("v1", new OpenApiInfo { Title = "Real Estate Comparator API", Version = "v1" });
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -49,6 +53,12 @@ namespace RealEstateComparatorService
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+            });
+            
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Real Estate Comparator API V1");
             });
         }
     }
