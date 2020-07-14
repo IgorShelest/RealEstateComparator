@@ -20,6 +20,25 @@ namespace RealEstateComparatorService.Controllers
             _mapper = mapper;
         }
 
+        /// <summary>
+        /// Get list of better Apartments
+        /// </summary>
+        /// <remarks>
+        /// Sample request:
+        ///
+        ///     POST https://{host}/api/RealEstateComparator
+        ///     {
+        ///        "City": "Львів",
+        ///        "NumberOfRooms": 2,
+        ///        "HasMultipleFloors": false,
+        ///        "DwellingSpace": 65,
+        ///        "RenovationPricePerMeter": 12000,
+        ///        "OverallPrice": 10000000
+        ///     }
+        ///
+        /// </remarks>
+        /// <response code="200">Returns list of better Apartments</response>
+        /// <response code="400">If ApartmentSpecsDto is in wrong format</response>
         [HttpPost]
         public IActionResult ProposeBetterApartments(ApartmentSpecsDto apartmentSpecs)
         {
@@ -33,6 +52,18 @@ namespace RealEstateComparatorService.Controllers
             return Ok(betterApartments);
         }
 
+        /// <summary>
+        /// Get Apart Complex by Id
+        /// </summary>
+        /// <remarks>
+        /// Sample request:
+        ///
+        ///     GET https://{host}/api/RealEstateComparator?complexId={id}
+        ///
+        /// </remarks>
+        /// <response code="200">Returns specified Apart Complex</response>
+        /// <response code="204">If there is no such Apart Complex</response>
+        /// <response code="400">If complexId is in wrong format</response>
         [HttpGet]
         public async Task<IActionResult> GetApartComplex(int complexId)
         {
