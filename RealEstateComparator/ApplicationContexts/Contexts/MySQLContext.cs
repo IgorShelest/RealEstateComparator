@@ -1,5 +1,6 @@
 ﻿using ApplicationContexts.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
 namespace ApplicationContexts
 {
@@ -9,11 +10,22 @@ namespace ApplicationContexts
         public DbSet<Apartment> Apartments { get; set; }
         private readonly string  _connectionString;
 
+        /*
+        * Called automatically by application
+        */
         public MySQLContext(string connectionString)
         {
-            // Database.Migrate();
             _connectionString = connectionString;
-            Database.EnsureCreated();
+            Database.Migrate();
+        }
+        
+        /*
+        * Called manually for Migration Creation
+        */
+        public MySQLContext()
+        {
+            _connectionString = ReadConnectionString();
+            Database.Migrate();
         }
 
         public void Save()
@@ -50,6 +62,14 @@ namespace ApplicationContexts
             });
             
             base.OnModelCreating(modelBuilder);
+        }
+
+        private string ReadConnectionString()
+        {
+            var configBuilder = new ConfigurationBuilder();
+            configBuilder.AddJsonFile("appsettings.json");
+            var configRoot = configBuilder.Build();
+            return configRoot.GetConnectionString("DefaultMySQLConnection");   
         }
     }
 }
