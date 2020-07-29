@@ -28,7 +28,7 @@ namespace RealEstateComparatorService
         {
             services.AddControllers();
             services.AddScoped<IRealEstateService, RealEstateService>();
-            services.AddScoped<IApplicationContext>(service => new SQLServerContext(Configuration.GetValue<string>("ConnectionStrings:DefaultConnection")));
+            services.AddScoped<IApplicationContext>(service => new SQLServerContext(Configuration.GetValue<string>("ConnectionStrings:DefaultSQLServerConnection")));
             services.AddScoped<IApartmentRepository, ApartmentRepository>();
             services.AddScoped<IApartComplexRepository, ApartComplexRepository>();
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());  

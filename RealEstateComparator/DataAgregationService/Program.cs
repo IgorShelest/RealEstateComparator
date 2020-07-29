@@ -2,6 +2,7 @@
 using ApplicationContextRepositories;
 using ApplicationContexts;
 using DataAggregationService.Aggregators.Common.Services;
+using DataAggregationService.Aggregators.DomRia;
 using DataAggregationService.Interfaces;
 using DataAggregationService.Services;
 using DataAggregationService.Aggregators.LunUa.Services;
@@ -37,11 +38,10 @@ namespace DataAggregationService
             serviceCollection.AddScoped<DataAggregationService.Aggregators.LunUa.Services.ApartComplexHandler>();
             serviceCollection.AddScoped<DataAggregationService.Aggregators.LunUa.Services.ApartmentHandler>();
             
-            // serviceCollection.AddScoped<IAggregator, DomRiaAggregator>();
-            // serviceCollection.AddScoped<DataAggregationService.Aggregators.DomRia.Services.PageHandler>();
-            // serviceCollection.AddScoped<CityHandler>();
-            // serviceCollection.AddScoped<DataAggregationService.Aggregators.DomRia.Services.ApartComplexHandler>();
-            // serviceCollection.AddScoped<DataAggregationService.Aggregators.DomRia.Services.ApartmentHandler>();
+            serviceCollection.AddScoped<IAggregator, DomRiaAggregator>();
+            serviceCollection.AddScoped<DataAggregationService.Aggregators.DomRia.Services.PageHandler>();
+            serviceCollection.AddScoped<DataAggregationService.Aggregators.DomRia.Services.ApartComplexHandler>();
+            serviceCollection.AddScoped<DataAggregationService.Aggregators.DomRia.Services.ApartmentHandler>();
             
             return serviceCollection;
         }

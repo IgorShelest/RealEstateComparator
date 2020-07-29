@@ -24,7 +24,7 @@ namespace RealEstateComparatorService.Services
             var apartmentsByPhysicalSpecs = SelectApartmentsByPhysicalsSpecs(apartmentSpecs);
             var betterApartments = SelectApartmentsByPriceSpecs(apartmentsByPhysicalSpecs, apartmentSpecs);
 
-            return betterApartments.ToList();
+            return betterApartments;
         }
 
         public async Task<ApartComplex> GetApartComplex(int complexId)
@@ -42,7 +42,7 @@ namespace RealEstateComparatorService.Services
             var spaceDiff = apartment.DwellingSpaceMax - apartment.DwellingSpaceMin;
             var priceDiff = apartment.SquareMeterPriceMax - apartment.SquareMeterPriceMin;
 
-            var priceDiffPerMeter = priceDiff / spaceDiff;
+            var priceDiffPerMeter = (priceDiff == 0 || spaceDiff == 0) ? 0 : priceDiff / spaceDiff;
 
             var addedSpace = dwellingSpace - apartment.DwellingSpaceMin;
             var addedPrice = addedSpace * priceDiffPerMeter;
