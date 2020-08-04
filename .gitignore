@@ -1,0 +1,17 @@
+RealEstateComparator/DataAgregationService/bin/
+RealEstateComparator/DataAgregationService/obj/
+RealEstateComparator/RealEstateComparatorService/obj/
+RealEstateComparator/.vs/
+RealEstateComparator/RealEstateComparatorService/bin/
+Properties
+RealEstateComparator/.idea
+RealEstateComparator/DbService/obj
+RealEstateComparator/ApplicationContext/bin
+RealEstateComparator/ApplicationContext/obj
+RealEstateComparator/ApplicationContextRepositories/bin
+RealEstateComparator/ApplicationContextRepositories/obj
+RealEstateComparator/IRealEstateComparator/obj
+RealEstateComparator/ApplicationContexts/bin
+RealEstateComparator/ApplicationContexts/obj
+RealEstateComparator/DataAggregationService.Tests/bin
+RealEstateComparator/DataAggregationService.Tests/obj
