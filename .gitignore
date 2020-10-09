@@ -15,3 +15,7 @@ RealEstateComparator/ApplicationContexts/bin
 RealEstateComparator/ApplicationContexts/obj
 RealEstateComparator/DataAggregationService.Tests/bin
 RealEstateComparator/DataAggregationService.Tests/obj
+RealEstateComparator/RealEstateComparatorService.Tests/bin
+RealEstateComparator/RealEstateComparatorService.Tests/obj
+RealEstateComparator/obj
+RealEstateComparator/.sonarqube
